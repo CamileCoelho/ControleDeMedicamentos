@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ControleDeMedicamentos.ConsoleApp", "ControleDeMedicamentos.ConsoleApp\ControleDeMedicamentos.ConsoleApp.csproj", "{F58D15C4-E421-46D5-A5CB-0C4C62E143B2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F58D15C4-E421-46D5-A5CB-0C4C62E143B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F58D15C4-E421-46D5-A5CB-0C4C62E143B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F58D15C4-E421-46D5-A5CB-0C4C62E143B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F58D15C4-E421-46D5-A5CB-0C4C62E143B2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE94A3EB-71AC-4425-933A-A204F43FB3E1}
+	EndGlobalSection
+EndGlobal
