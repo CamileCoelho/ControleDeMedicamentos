@@ -10,14 +10,20 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
 {
     public class InformacoesReposicao
     {
-        Remedio remedio { get; set; }
-        Funcionario funcionario { get; set; }
-        public string data { get; set; }
-        public int quantidadeNecessaria { get; set; }
+        public Remedio remedio { get; set; }
+        public Funcionario funcionario { get; set; }
+        public DateTime data { get; set; }
 
         public InformacoesReposicao()
         {
             
+        }
+
+        public InformacoesReposicao(Remedio remedio, Funcionario funcionario, int quantidadeRequisitada)
+        {
+            this.remedio = remedio;
+            this.funcionario = funcionario;
+            data = DateTime.Today;
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using ClubeDaLeituraDaCamile.ConsoleApp.Compartilhado;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,6 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 {
     public class TelaPaciente : TelaMae
     {
-        bool continuar = true;
-
         RepositorioPaciente repositorioPaciente;
 
         public TelaPaciente(RepositorioPaciente repositorioPaciente, Validador validador)
@@ -22,6 +21,8 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 
         public void VisualizarTela()
         {
+            bool continuar = true;
+
             do
             {
                 string opcao = MostrarMenu();
@@ -68,10 +69,10 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
                 Console.WriteLine();
                 Console.Write("   Opção escolhida: ");
                 string opcao = Console.ReadLine().ToUpper();
-                bool opcaoValida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
-                while (opcaoValida)
+                bool opcaoInvalida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
+                while (opcaoInvalida)
                 {
-                    if (opcaoValida)
+                    if (opcaoInvalida)
                     {
                         ExibirMensagem("\n   Opção inválida, tente novamente. ", ConsoleColor.DarkRed);
                         break;
@@ -83,27 +84,25 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 
         private void Cadastrar()
         {
-            InformacoesPessoais informacoesPessoais;
-            string cpf;
-            Imput(out informacoesPessoais, out cpf);
+            Imput(out InformacoesPessoais informacoesPessoais, out string cpf);
 
-            Paciente pacienteToAdd = new Paciente(informacoesPessoais, cpf);
+            string valido = validador.ValidarPaciente(informacoesPessoais, cpf);
 
-            string validacao = repositorioPaciente.CadastrarPaciente(pacienteToAdd);
-
-            if (validacao == "\n   Paciente cadastrado com sucesso!")
+            if (valido == "REGISTRO_REALIZADO")
             {
-                ExibirMensagem(validacao, ConsoleColor.DarkGreen);
+                Paciente toAdd = new Paciente(informacoesPessoais, cpf);
+                repositorioPaciente.Create(toAdd); 
+                ExibirMensagem("\n   Paciente cadastrado com sucesso!", ConsoleColor.DarkGreen);
             }
             else
             {
-                ExibirMensagem(validacao, ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Paciente Não Cadastrado: " + valido, ConsoleColor.DarkRed);
             }
         }
 
         private void Visualizar()
         {
-            if (repositorioPaciente.ListarPacientes().Count == 0)
+            if (repositorioPaciente.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhum paciente cadastrado. " +
                     "\n   Você deve cadastrar um paciente para poder visualizar seus cadastros.", ConsoleColor.DarkRed);
@@ -115,74 +114,76 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 
         private void Editar()
         {
-            if (repositorioPaciente.ListarPacientes().Count == 0)
+            if (repositorioPaciente.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhum paciente cadastrado. " +
-                    "\n   Você deve cadastrar um paciente para poder visualizar seus cadastros.", ConsoleColor.DarkRed);
+                    "\n   Você deve cadastrar um paciente para poder editar um cadastro.", ConsoleColor.DarkRed);
                 return;
             }
 
-            Paciente pacienteToEdit = repositorioPaciente.EncontrarPacientePorId(ObterId(repositorioPaciente));
+            Paciente toEdit = repositorioPaciente.GetById(ObterId(repositorioPaciente));
 
-            if (pacienteToEdit == null)
+            if (toEdit == null)
             {
                 ExibirMensagem("\n   Paciente não encontrado!", ConsoleColor.DarkRed);
             }
             else
             {
-                InformacoesPessoais informacoesPessoais;
-                string cpf;
-                Imput(out informacoesPessoais, out cpf);
+                Imput(out InformacoesPessoais informacoesPessoais, out string cpf);
 
-                string validacaoEdit = pacienteToEdit.Validar(informacoesPessoais, cpf);
-                repositorioPaciente.EditarPaciente(pacienteToEdit, informacoesPessoais, cpf);
+                string valido = validador.ValidarPaciente(informacoesPessoais, cpf);
 
-                if (validacaoEdit == "REGISTRO_REALIZADO")
+                if (valido == "REGISTRO_REALIZADO")
                 {
-                    ExibirMensagem(validacaoEdit, ConsoleColor.DarkGreen);
+                    repositorioPaciente.Update(toEdit, informacoesPessoais, cpf);
+                    ExibirMensagem("\n   Paciente editado com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
                 {
-                    ExibirMensagem(validacaoEdit, ConsoleColor.DarkRed);
+                    ExibirMensagem("\n   Paciente Não Editado:" + valido, ConsoleColor.DarkRed);
                 }
-
             }
         }
 
         private void Excluir()
         {
-            if (repositorioPaciente.ListarPacientes().Count == 0)
+            if (repositorioPaciente.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhum paciente cadastrado. " +
-                    "\n   Você deve cadastrar um paciente para poder visualizar seus cadastros.", ConsoleColor.DarkRed);
+                    "\n   Você deve cadastrar um paciente para poder excluir um cadastro.", ConsoleColor.DarkRed);
                 return;
             }
-            string validacaoExclusao = repositorioPaciente.ExcluirPaciente(ObterId(repositorioPaciente), validador);
 
-            if (validacaoExclusao == "\n   Paciente excluido com sucesso!")
+            Paciente toDelete = repositorioPaciente.GetById(ObterId(repositorioPaciente));
+
+            string valido = validador.PermitirExclusaoDoPaciente(toDelete);
+
+            if (valido == "SUCESSO!")
             {
-                ExibirMensagem(validacaoExclusao, ConsoleColor.DarkGreen);
+                repositorioPaciente.Delete(toDelete);
+                ExibirMensagem("\n   Paciente excluido com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
             {
-                ExibirMensagem(validacaoExclusao, ConsoleColor.DarkRed);
+                ExibirMensagem(valido, ConsoleColor.DarkRed);
             }
         }
 
-        public void Imput(out InformacoesPessoais informacoesPessoais, out string cpf)
+        public void Imput(out InformacoesPessoais informacoesPessoais,out string cpf)
         {
+            informacoesPessoais = new InformacoesPessoais();
             Console.Clear();
             Console.Write("\n   Digite o nome do paciente: ");
-            string nome = Console.ReadLine();
+            informacoesPessoais.nome = Console.ReadLine();
             Console.Write("\n   Digite o telefone desse paciente (XX)XXXXX-XXXX: ");
-            string telefone = Console.ReadLine();
+            informacoesPessoais.telefone = Console.ReadLine();
             Console.Write("\n   Digite o email desse paciente: ");
-            string email = Console.ReadLine();
+            informacoesPessoais.email = Console.ReadLine();
             Console.Write("\n   Digite o endereco desse paciente: ");
-            string endereco = Console.ReadLine();
+            informacoesPessoais.endereco = Console.ReadLine();
             Console.Write("\n   Digite o CPF desse paciente XXX.XXX.XXX-XX ou XXXXXXXXXXX: ");
             cpf = Console.ReadLine();
-            informacoesPessoais = new InformacoesPessoais(nome, telefone, email, endereco);
+
         }
 
         public int ObterId(RepositorioPaciente repositorioPaciente)
@@ -203,20 +204,20 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
         public void MostarListaPacientes(RepositorioPaciente repositorioPaciente)
         {
             Console.Clear();
-            Console.WriteLine("_____________________________________________________________");
+            Console.WriteLine("_____________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine("                  Lista de Pacientes                         ");
-            Console.WriteLine("_____________________________________________________________");
+            Console.WriteLine("                                    Lista de Pacientes                                       ");
+            Console.WriteLine("_____________________________________________________________________________________________");
             Console.WriteLine();
             Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}", "ID ", "  NOME ", "  TELEFONE ", "  CPF ");
-            Console.WriteLine("_____________________________________________________________");
+            Console.WriteLine("_____________________________________________________________________________________________");
             Console.WriteLine();
 
-            foreach (Paciente print in repositorioPaciente.ListarPacientes())
+            foreach (Paciente print in repositorioPaciente.GetAll())
             {
                 if (print != null)
                 {
-                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}", print.informacoesPessoais.nome, print.informacoesPessoais.telefone, print.cpf);
+                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}", print.id, print.informacoesPessoais.nome, print.informacoesPessoais.telefone, print.cpf);
                 }
             }
         }

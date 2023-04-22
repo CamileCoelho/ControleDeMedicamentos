@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,6 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             this.telefone = telefone;
             this.email = email;
             this.endereco = endereco;
-        }
+        }        
     }
 }

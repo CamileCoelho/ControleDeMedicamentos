@@ -1,0 +1,83 @@
+requisicao
+
+se o paciente nao existir ou nao tiver pacientes cadastrados, solicite para que o funcionario faça o cadastro de um novo paciente 
+
+medicamenot a msm coisa
+
+data = today
+
+qtd que quer = djfhndjgvbfj
+
+qual funcionário está fazendo isso?
+
+
+aquisicao
+
+NAO ESTA ATUALIZANDO A QUANTIDADE DE REMEDIOS QUANDO FAZ UMA REQUISIÇÃO
+
+
+verificar se  a qts devolvida é menor ou igual a quantidade requisitada anteriormente, se nn não pode devolver 
+
+
+
+
+
+
+
+
+
+
+        private void Excluir()
+        {
+            if (repositorioRequisicao.GetAll().Count == 0)
+            {
+                ExibirMensagem("\n   Nenhuma requisição encontrada. " +
+                    "\n   Você deve realizar uma requisição para poder visualizar suas requisições.", ConsoleColor.DarkRed);
+                return;
+            }
+
+            Requisicao toDelete = repositorioRequisicao.GetById(ObterId(repositorioRequisicao));
+
+            string validacaoExclusao = validador.PermitirExclusaoRequisicao(toDelete);
+
+            if (toDelete != null && validacaoExclusao == "SUCESSO!")
+            {
+                repositorioRequisicao.Delete(toDelete);
+                ExibirMensagem("\n   Requisição excluida com sucesso! ", ConsoleColor.DarkGreen);
+            }
+            else
+            {
+                ExibirMensagem("\n   Requisição não excluida:" + validacaoExclusao, ConsoleColor.DarkRed);
+            }
+        }
+
+
+
+
+
+
+
+
+        private void Excluir()
+        {
+            if (repositorioAquisicao.GetAll().Count == 0)
+            {
+                ExibirMensagem("\n   Nenhuma aquisição encontrada. " +
+                    "\n   Você deve realizar uma aquisição para poder visualizar suas aquisições.", ConsoleColor.DarkRed);
+                return;
+            }
+
+            Aquisicao toDelete = repositorioAquisicao.GetById(ObterId(repositorioAquisicao));
+
+            string validacaoExclusao = validador.(toDelete);
+
+            if (toDelete != null && validacaoExclusao == "SUCESSO!")
+            {
+                repositorioAquisicao.Delete(toDelete);
+                ExibirMensagem("\n   Aquisição excluida com sucesso! ", ConsoleColor.DarkGreen);
+            }
+            else
+            {
+                ExibirMensagem("\n   Aquisição não excluida:" + validacaoExclusao, ConsoleColor.DarkRed);
+            }
+        }

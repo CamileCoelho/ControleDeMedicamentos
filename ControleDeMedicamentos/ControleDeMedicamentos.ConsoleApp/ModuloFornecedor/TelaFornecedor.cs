@@ -1,6 +1,7 @@
-﻿using ClubeDaLeituraDaCamile.ConsoleApp.Compartilhado;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.ModuloFuncionario;
+using ControleDeMedicamentos.ConsoleApp.ModuloPaciente;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,20 +61,20 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
                 Console.WriteLine();
                 Console.WriteLine("   Digite:                                                                        ");
                 Console.WriteLine();
-                Console.WriteLine("   1  - Para cadastrar um novo fornecedor.                                          ");
-                Console.WriteLine("   2  - Para visualizar seus fornecedores cadastrados.                               ");
-                Console.WriteLine("   3  - Para editar o cadastro de um fornecedor.                                    ");
-                Console.WriteLine("   4  - Para excluir o cadastro de um fornecedor.                                   ");
+                Console.WriteLine("   1  - Para cadastrar um novo fornecedor.                                        ");
+                Console.WriteLine("   2  - Para visualizar seus fornecedores cadastrados.                            ");
+                Console.WriteLine("   3  - Para editar o cadastro de um fornecedor.                                  ");
+                Console.WriteLine("   4  - Para excluir o cadastro de um fornecedor.                                 ");
                 Console.WriteLine();
                 Console.WriteLine("   5  - Para voltar ao menu principal.                                            ");
                 Console.WriteLine("__________________________________________________________________________________");
                 Console.WriteLine();
                 Console.Write("   Opção escolhida: ");
                 string opcao = Console.ReadLine().ToUpper();
-                bool opcaoValida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
-                while (opcaoValida)
+                bool opcaoInvalida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
+                while (opcaoInvalida)
                 {
-                    if (opcaoValida)
+                    if (opcaoInvalida)
                     {
                         ExibirMensagem("\n   Opção inválida, tente novamente. ", ConsoleColor.DarkRed);
                         break;
@@ -85,27 +86,25 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
 
         private void Cadastrar()
         {
-            InformacoesPessoais informacoesPessoais;
-            string cnpj;
-            Imput(out informacoesPessoais, out cnpj);
+            Imput(out InformacoesPessoais informacoesPessoais, out string cnpj);
 
-            Fornecedor toAdd = new Fornecedor(informacoesPessoais, cnpj);
+            string valido = validador.ValidarFornecedor(informacoesPessoais, cnpj);
 
-            string validacao = repositorioFornecedor.CadastrarFornecedor(toAdd);
-
-            if (validacao == "\n   Fornecedor cadastrado com sucesso!")
+            if (valido == "REGISTRO_REALIZADO")
             {
-                ExibirMensagem(validacao, ConsoleColor.DarkGreen);
+                Fornecedor toAdd = new Fornecedor(informacoesPessoais,cnpj);
+                repositorioFornecedor.Create(toAdd);
+                ExibirMensagem("\n   Fornecedor cadastrado com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
             {
-                ExibirMensagem(validacao, ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Fornecedor Não Cadastrado:" + valido, ConsoleColor.DarkRed);
             }
         }
 
         private void Visualizar()
         {
-            if (repositorioFornecedor.ListarFornecedores().Count == 0)
+            if (repositorioFornecedor.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhum fornecedor cadastrado. " +
                     "\n   Você deve cadastrar um fornecedor para poder visualizar seus cadastros.", ConsoleColor.DarkRed);
@@ -117,74 +116,75 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
 
         private void Editar()
         {
-            if (repositorioFornecedor.ListarFornecedores().Count == 0)
+            if (repositorioFornecedor.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhum fornecedor cadastrado. " +
                     "\n   Você deve cadastrar um fornecedor para poder visualizar seus cadastros.", ConsoleColor.DarkRed);
                 return;
             }
 
-            Fornecedor toEdit = repositorioFornecedor.EncontrarFornecedorPorId(ObterId(repositorioFornecedor));
+            Fornecedor toEdit = repositorioFornecedor.GetById(ObterId(repositorioFornecedor));
 
             if (toEdit == null)
             {
-                ExibirMensagem("\n   Funcionário não encontrado!", ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Fornecedor não encontrado!", ConsoleColor.DarkRed);
             }
             else
             {
-                InformacoesPessoais informacoesPessoais;
-                string cpf;
-                Imput(out informacoesPessoais, out cpf);
+                Imput(out InformacoesPessoais informacoesPessoais, out string cnpj);
 
-                string validacaoEdit = toEdit.Validar(informacoesPessoais, cpf);
-                repositorioFornecedor.EditarFornecedor(toEdit, informacoesPessoais, cpf);
+                string valido = validador.ValidarFornecedor(informacoesPessoais, cnpj);
 
-                if (validacaoEdit == "REGISTRO_REALIZADO")
+                if (valido == "REGISTRO_REALIZADO")
                 {
-                    ExibirMensagem(validacaoEdit, ConsoleColor.DarkGreen);
+                    repositorioFornecedor.Update(toEdit, informacoesPessoais, cnpj);
+                    ExibirMensagem("\n   Fornecedor editado com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
                 {
-                    ExibirMensagem(validacaoEdit, ConsoleColor.DarkRed);
+                    ExibirMensagem("\n   Fornecedor Não Editado:" + valido, ConsoleColor.DarkRed);
                 }
-
             }
         }
 
         private void Excluir()
         {
-            if (repositorioFornecedor.ListarFornecedores().Count == 0)
+            if (repositorioFornecedor.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhum fornecedor cadastrado. " +
                     "\n   Você deve cadastrar um fornecedor para poder visualizar seus cadastros.", ConsoleColor.DarkRed);
                 return;
             }
-            string validacaoExclusao = repositorioFornecedor.ExcluirFornecedor(ObterId(repositorioFornecedor), validador);
 
-            if (validacaoExclusao == "\n   Fornecedor excluido com sucesso!")
+            Fornecedor toDelete = repositorioFornecedor.GetById(ObterId(repositorioFornecedor));
+
+            string validacaoExclusao = validador.PermitirExclusaoDoFornecedor(toDelete);
+
+            if (validacaoExclusao == "SUCESSO!")
             {
-                ExibirMensagem(validacaoExclusao, ConsoleColor.DarkGreen);
+                repositorioFornecedor.Delete(toDelete);
+                ExibirMensagem("\n   Fornecedor excluido com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
             {
-                ExibirMensagem(validacaoExclusao, ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Fornecedor não excluido:" +validacaoExclusao, ConsoleColor.DarkRed);
             }
         }
 
         public void Imput(out InformacoesPessoais informacoesPessoais, out string cnpj)
         {
+            informacoesPessoais = new InformacoesPessoais();
             Console.Clear();
-            Console.Write("\n   Digite o nome do paciente: ");
-            string nome = Console.ReadLine();
-            Console.Write("\n   Digite o telefone desse paciente (XX)XXXXX-XXXX: ");
-            string telefone = Console.ReadLine();
-            Console.Write("\n   Digite o email desse paciente: ");
-            string email = Console.ReadLine();
-            Console.Write("\n   Digite o endereco desse paciente: ");
-            string endereco = Console.ReadLine();
-            Console.Write("\n   Digite o CNPJ desse paciente XX.XXX.XXX/XXXX-XX ou XXXXXXXXXXXXXX: ");
+            Console.Write("\n   Digite o nome do Fornecedor: ");
+            informacoesPessoais.nome = Console.ReadLine();
+            Console.Write("\n   Digite o telefone desse fornecedor (XX)XXXXX-XXXX: ");
+            informacoesPessoais.telefone = Console.ReadLine();
+            Console.Write("\n   Digite o email desse fornecedor: ");
+            informacoesPessoais.email = Console.ReadLine();
+            Console.Write("\n   Digite o endereco desse fornecedor: ");
+            informacoesPessoais.endereco = Console.ReadLine();
+            Console.Write("\n   Digite o CNPJ desse fornecedor XX.XXX.XXX/XXXX-XX ou XXXXXXXXXXXXXX: ");
             cnpj = Console.ReadLine();
-            informacoesPessoais = new InformacoesPessoais(nome, telefone, email, endereco);
         }
 
         public int ObterId(RepositorioFornecedor repositorioFornecedor)
@@ -205,20 +205,20 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
         public void MostarListaFornecedores(RepositorioFornecedor repositorioFornecedor)
         {
             Console.Clear();
-            Console.WriteLine("_____________________________________________________________");
+            Console.WriteLine("_____________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine("                 Lista de Funcionarios                       ");
-            Console.WriteLine("_____________________________________________________________");
+            Console.WriteLine("                                  Lista de Funcionarios                                      ");
+            Console.WriteLine("_____________________________________________________________________________________________");
             Console.WriteLine();
             Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}", "ID ", "  NOME ", "  TELEFONE ", "  CNPJ ");
-            Console.WriteLine("_____________________________________________________________");
+            Console.WriteLine("_____________________________________________________________________________________________");
             Console.WriteLine();
 
-            foreach (Fornecedor print in repositorioFornecedor.ListarFornecedores())
+            foreach (Fornecedor print in repositorioFornecedor.GetAll())
             {
                 if (print != null)
                 {
-                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}", print.informacoesPessoais.nome, print.informacoesPessoais.telefone, print.cnpj);
+                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}", print.id, print.informacoesPessoais.nome, print.informacoesPessoais.telefone, print.cnpj);
                 }
             }
         }

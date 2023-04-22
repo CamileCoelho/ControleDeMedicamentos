@@ -1,4 +1,4 @@
-﻿using ClubeDaLeituraDaCamile.ConsoleApp.Compartilhado;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.ModuloRemedios;
 using System;
@@ -25,33 +25,6 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
             id = idCounter++;
             this.informacoesPessoais = informacoesPessoais;
             this.cnpj = cnpj;
-        }
-
-        public string Validar(InformacoesPessoais informacoesPessoais, string cnpj)
-
-        {
-            Validador valida = new Validador();
-            string mensagem = "";
-
-            if (valida.ValidaTelefone(informacoesPessoais.telefone))
-                mensagem += "TELEFONE_INVALIDO";
-
-            if (valida.ValidarString(informacoesPessoais.endereco))
-                mensagem += "ENDERECO_INVALIDO";
-
-            if (valida.ValidarString(informacoesPessoais.nome))
-                mensagem += "ENDERECO_INVALIDO";
-
-            if (valida.ValidaEmail(informacoesPessoais.email))
-                mensagem += "E-MAIL_INVALIDO";
-
-            if (valida.ValidaCNPJ(cnpj))
-                mensagem += "CNPJ_INVALIDO ";
-
-            if (mensagem != "")
-                return mensagem;
-
-            return "REGISTRO_REALIZADO";
         }
     }
 }

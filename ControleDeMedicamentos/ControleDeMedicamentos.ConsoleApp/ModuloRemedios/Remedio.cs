@@ -1,4 +1,7 @@
-﻿using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
+using ControleDeMedicamentos.ConsoleApp.ModuloRequisicao;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +10,27 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
 {
-    public class Remedio
+    public class Remedio : EntidadeMae
     {
         private static int idCounter = 1;
         public string nome { get; set; }
         public string descricao { get; set; }
-        public List<Remedio> historicoRequisicaoes { get; set; }
         public int quantidadeDisponivel { get; set; }
-        public int quantidadeMinima { get; set; } //10 remedios
+        public int quantidadeMinima { get; set; } 
         public Fornecedor fornecedor { get; set; }
 
         public Remedio()
         {
             
         }
-
+        public Remedio(string nome, string descricao, int quantidadeDisponivel, int quantidadeMinima, Fornecedor fornecedor)
+        {
+            id = idCounter++;
+            this.nome = nome;
+            this.descricao = descricao;
+            this.quantidadeDisponivel = quantidadeDisponivel; 
+            this.quantidadeMinima = quantidadeMinima;   
+            this.fornecedor = fornecedor;
+        }        
     }
 }

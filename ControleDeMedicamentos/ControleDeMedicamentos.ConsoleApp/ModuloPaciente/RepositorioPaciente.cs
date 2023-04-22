@@ -1,10 +1,4 @@
-﻿using ClubeDaLeituraDaCamile.ConsoleApp.Compartilhado;
-using ControleDeMedicamentos.ConsoleApp.Compartilhado;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 {
@@ -12,47 +6,30 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
     {
         List<Paciente> listaPaciente = new List<Paciente>();
 
-        public string CadastrarPaciente(Paciente toAdd)
+        public void Create(Paciente toAdd)
         {
-            string validacao = toAdd.Validar(toAdd.informacoesPessoais, toAdd.cpf);
-            if (validacao == "REGISTRO_REALIZADO")
-            {
-                listaPaciente.Add(toAdd);
-                return "\n   Paciente cadastrado com sucesso!";
-            }
-
-            return "\n   Paciente Não Cadastrado: " + validacao;
+             listaPaciente.Add(toAdd);
         }
 
-        public string EditarPaciente(Paciente toEdit, InformacoesPessoais informacoesPessoais, string cpf)
+        public void Update(Paciente toEdit, InformacoesPessoais informacoesPessoais, string cpf)
         {
             toEdit.informacoesPessoais = informacoesPessoais;
             toEdit.cpf = cpf;
-            return "\n   Paciente editado com sucesso!";
         }
 
-        public string ExcluirPaciente(int id, Validador validador)
+        public void Delete(Paciente toDelete)
         {
-            Paciente toDelete = EncontrarPacientePorId(id);
-
-            string validacaoExclusao = validador.PermitirExclusaoDoPaciente(id);
-
-            if (toDelete != null && validacaoExclusao == "SUCESSO!")
-            {
-                listaPaciente.Remove(toDelete);
-                return "\n   Paciente excluido com sucesso!";
-            }
-            return "\n   Paciente não excluido: " + validacaoExclusao;
+            listaPaciente.Remove(toDelete);
         }
 
-        public List<Paciente> ListarPacientes()
+        public List<Paciente> GetAll()
         {
             return listaPaciente;
         }
 
-        public Paciente EncontrarPacientePorId(int id)
+        public Paciente GetById(int id)
         {
-            return listaPaciente.Find(caixa => caixa.id == id);
+            return listaPaciente.Find(paciente => paciente.id == id);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ClubeDaLeituraDaCamile.ConsoleApp.Compartilhado;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +15,8 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         {
             Console.ForegroundColor = cor;
             Console.WriteLine(mensagem);
-            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
         }
     }
 }
