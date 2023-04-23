@@ -1,11 +1,9 @@
-﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
-using ControleDeMedicamentos.ConsoleApp.ModuloAquisicao;
+﻿using ControleDeMedicamentos.ConsoleApp.ModuloAquisicao;
 using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
 using ControleDeMedicamentos.ConsoleApp.ModuloFuncionario;
 using ControleDeMedicamentos.ConsoleApp.ModuloPaciente;
 using ControleDeMedicamentos.ConsoleApp.ModuloRemedios;
 using ControleDeMedicamentos.ConsoleApp.ModuloRequisicao;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
@@ -191,7 +189,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             string mensagem = "";
 
             if (informacoesReposicao.remedio == null)
-                mensagem += " REMEDIO_INVALIDOA ";
+                mensagem += " REMEDIO_INVALIDO ";
             else if (informacoesReposicao.remedio.quantidadeDisponivel < quantidadeDesejada)
                 mensagem += " QUANTIDADE_INDISPONÍVEL ";
 
@@ -234,7 +232,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
                 mensagem += " NOME_INVALIDO ";
 
             if (valida.ValidarString(descricao))
-                mensagem += " NOME_INVALIDO ";
+                mensagem += " DESCRICAO_INVALIDA ";
 
             if (mensagem != "")
                 return mensagem;
@@ -245,7 +243,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public string PermitirExclusaoDoPaciente(Paciente toDelete)
         {
             if (toDelete == null)
-                return " Fornecedor não encontrado!";
+                return " Paciente não encontrado!";
             if (repositorioRequisicao.GetAll().Any(x => x.paciente.id == toDelete.id))
                 return " Este paciente possuí processo em andamento. ";
             else
@@ -290,12 +288,23 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
                 return "SUCESSO!";
         }
 
-        public string PermitirExclusaoAquisicao(Requisicao toDelete)
+        public string PermitirExclusaoAquisicao(Aquisicao toDelete, string senhaImputada)
         {
+            Validador valida = new Validador();
+            string mensagem = "";
+
+            if (toDelete.informacoesReposicao.funcionario == null)
+                mensagem += " FUNCIONARIO_INVALIDO ";
+            else if (valida.ValidarString(senhaImputada) || toDelete.informacoesReposicao.funcionario.senha != senhaImputada)
+                mensagem += " SENHA_ERRADA ";
+
             if (toDelete == null)
-                return " Aquisição não encontrada!";
-            else
-                return "SUCESSO!";
+                return " AQUISICAO_INEXISTENTE ";
+
+            if (mensagem != "")
+                return mensagem;
+
+            return "REGISTRO_REALIZADO";
         }
 
     }

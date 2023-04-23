@@ -52,7 +52,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                         Visualizar();
                         continue;
                     case "3":
-                        Editar();
+                        Cancel();
                         continue;
                 }
             } while (continuar);
@@ -72,9 +72,9 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                 Console.WriteLine(); 
                 Console.WriteLine("   2  - Para visualizar suas aquisições.                                          ");
                 Console.WriteLine();
-                Console.WriteLine("   3  - Para editar uma de suas aquisições.                                       ");
+                Console.WriteLine("   3  - Para cancelar uma de suas aquisições.                                     ");
                 Console.WriteLine();
-                Console.WriteLine(); // não pode cancelar uma compra, logo não pode excluir uma aquisição!
+                Console.WriteLine(); // não pode editar uma compra, logo não pode editar uma aquisição!
                 Console.WriteLine("   4  - Para voltar ao menu principal.                                            ");
                 Console.WriteLine("__________________________________________________________________________________");
                 Console.WriteLine();
@@ -95,6 +95,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
 
         private void Acquire()
         {
+            if (repositorioRemedio.GetAll().Count == 0)
+            {
+                ExibirMensagem("\n   Nenhuma registro de remédio encontrado. " +
+                    "\n   Você deve realizar o cadastro de um remédio para poder realizar uma aquisição. ", ConsoleColor.DarkRed);
+                return;
+            }
+
             Imput( out InformacoesReposicao informacoesReposicao, out int quantidadeAdquirida, out string senhaImputada);
 
             string valido = validador.ValidarAquisicao(informacoesReposicao, senhaImputada);
@@ -123,36 +130,38 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
             Console.ReadLine();
         }
 
-        private void Editar()
+        private void Cancel()
         {
             if (repositorioAquisicao.GetAll().Count == 0)
             {
                 ExibirMensagem("\n   Nenhuma aquisição encontrada. " +
-                    "\n   Você deve realizar uma aquisição para poder visualizar suas aquisições.", ConsoleColor.DarkRed);
+                    "\n   Você deve realizar uma aquisição para poder cancelar uma aquisição.", ConsoleColor.DarkRed);
                 return;
             }
 
-            Aquisicao toEdit = repositorioAquisicao.GetById(ObterId(repositorioAquisicao));
+            Aquisicao toDelete = repositorioAquisicao.GetById(ObterId(repositorioAquisicao));
 
-            if (toEdit == null)
+            if (toDelete.quantidadeAdquirida > toDelete.informacoesReposicao.remedio.quantidadeDisponivel)
             {
-                ExibirMensagem("\n   Aquisição não encontrada!", ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Você não pode cancelar essa aquisição." +
+                    "\n   Os remédios aquiridos nessa aquisição já foram vendidos. ", ConsoleColor.DarkRed);
+                return;
+            }
+
+            toDelete.informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            Console.Write("\n   Digite a senha: ");
+            string senhaImputada = Console.ReadLine();
+
+            string validacaoExclusao = validador.PermitirExclusaoAquisicao(toDelete, senhaImputada);
+
+            if (toDelete != null && validacaoExclusao == "REGISTRO_REALIZADO")
+            {
+                repositorioAquisicao.Delete(toDelete);
+                ExibirMensagem("\n   Aquisição excluida com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
             {
-                Imput(out InformacoesReposicao informacoesReposicao, out int quantidadeAdquirida, out string senhaImputada);
-
-                string valido = validador.ValidarAquisicao(informacoesReposicao, senhaImputada);
-
-                if (valido == "REGISTRO_REALIZADO")
-                {
-                    repositorioAquisicao.Update(toEdit, informacoesReposicao, quantidadeAdquirida);
-                    ExibirMensagem("\n   Aquisição editada com sucesso!", ConsoleColor.DarkGreen);
-                }
-                else
-                {
-                    ExibirMensagem("\n   Aquisição Não Editada:" + valido, ConsoleColor.DarkRed);
-                }
+                ExibirMensagem("\n   Aquisição não excluida:" + validacaoExclusao, ConsoleColor.DarkRed);
             }
         }
 
@@ -192,20 +201,20 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
         public void MostarListaAquisicoes(RepositorioAquisicao repositorioAquisicao)
         {
             Console.Clear();
-            Console.WriteLine("_____________________________________________________________________________________________");
+            Console.WriteLine("______________________________________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine("                                   Lista de Aquisições!                                      ");
-            Console.WriteLine("_____________________________________________________________________________________________");
+            Console.WriteLine("                                               Lista de Aquisições!                                                   ");
+            Console.WriteLine("______________________________________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}", "ID ", "  FUNCIONÁRIO ", "  REMÉDIO ", "  FORNECEDOR ", "  DATA ");
-            Console.WriteLine("_____________________________________________________________________________________________");
+            Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}|{5,-25}", "ID ", "  FUNCIONÁRIO ", "  REMÉDIO ", "  FORNECEDOR ", "  QTD ADQUIRIDA ", "  DATA ");
+            Console.WriteLine("______________________________________________________________________________________________________________________");
             Console.WriteLine();
 
             foreach (Aquisicao print in repositorioAquisicao.GetAll())
             {
                 if (print != null)
                 {
-                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}", print.id, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.informacoesReposicao.remedio.fornecedor, print.informacoesReposicao.data);
+                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}|{5,-25}", print.id, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.quantidadeAdquirida, print.informacoesReposicao.data);
                 }
             }
         }

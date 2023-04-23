@@ -18,10 +18,8 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             listaRequisicao.Add(toAdd);
         }
 
-        public void Update(Requisicao toEdit, Paciente paciente, InformacoesReposicao informacoesReposicao, int quantidadeRequisitada)
+        public void Update(Requisicao toEdit, int quantidadeRequisitada)
         {
-            toEdit.paciente = paciente;
-            toEdit.informacoesReposicao = informacoesReposicao;
             if(toEdit.quantidadeRequisitada < quantidadeRequisitada)
                 toEdit.informacoesReposicao.remedio.quantidadeDisponivel = toEdit.informacoesReposicao.remedio.quantidadeDisponivel + (quantidadeRequisitada - toEdit.quantidadeRequisitada);
             else

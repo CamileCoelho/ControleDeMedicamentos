@@ -19,10 +19,10 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
             listaAquisicaor.Add(toAdd);
         }
 
-        public void Update(Aquisicao toEdit, InformacoesReposicao informacoesReposicao, int quantidadeAdquirida)
+        public void Delete(Aquisicao toDelete)
         {
-            toEdit.informacoesReposicao = informacoesReposicao;
-            toEdit.quantidadeAdquirida = quantidadeAdquirida;
+            toDelete.informacoesReposicao.remedio.quantidadeDisponivel = (toDelete.informacoesReposicao.remedio.quantidadeDisponivel - toDelete.quantidadeAdquirida);
+            listaAquisicaor.Remove(toDelete);
         }
 
         public List<Aquisicao> GetAll()

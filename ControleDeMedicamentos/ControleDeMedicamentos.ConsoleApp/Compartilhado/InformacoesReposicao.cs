@@ -23,7 +23,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         {
             this.remedio = remedio;
             this.funcionario = funcionario;
-            data = DateTime.Today;
+            data = DateTime.Now;
         }
     }
 }

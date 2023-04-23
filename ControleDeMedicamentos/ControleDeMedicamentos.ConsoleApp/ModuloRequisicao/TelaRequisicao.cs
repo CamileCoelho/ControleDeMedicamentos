@@ -71,7 +71,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 Console.WriteLine();
                 Console.WriteLine("   2  - Para visualizar suas requisições.                                         ");
                 Console.WriteLine();
-                Console.WriteLine("   3  - Para editar uma de suas requisições.                                      ");
+                Console.WriteLine("   3  - Para editar a quantidade de remédios de uma requisição.                   ");
                 Console.WriteLine();
                 Console.WriteLine(); // não pode devolver o remedio, logo não pode excluir uma requisicao!
                 Console.WriteLine("   4  - Para voltar ao menu principal.                                            ");
@@ -158,13 +158,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             }
             else
             {
-                ImputEdit(out Paciente paciente, out InformacoesReposicao informacoesReposicao, out int quantidadeRequisitada, out string senhaImputada);
+                ImputEdit(toEdit, out int quantidadeRequisitada, out string senhaImputada);
 
-                string valido = validador.ValidarRequisicao(informacoesReposicao, quantidadeRequisitada, senhaImputada);
+                string valido = validador.ValidarRequisicao(toEdit.informacoesReposicao, quantidadeRequisitada, senhaImputada);
 
                 if (valido == "REGISTRO_REALIZADO")
                 {
-                    repositorioRequisicao.Update(toEdit, paciente, informacoesReposicao, quantidadeRequisitada);
+                    repositorioRequisicao.Update(toEdit, quantidadeRequisitada);
                     ExibirMensagem("\n   Requisição editada com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
@@ -174,7 +174,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             }
         }
 
-        public void Imput(out Paciente paciente, out InformacoesReposicao informacoesReposicao, out int quantidadeRequisitada, out string senhaImputada)
+        private void Imput(out Paciente paciente, out InformacoesReposicao informacoesReposicao, out int quantidadeRequisitada, out string senhaImputada)
         {
             informacoesReposicao = new InformacoesReposicao();
             Console.Clear();
@@ -194,20 +194,17 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             senhaImputada = Console.ReadLine();
         }
 
-        public void ImputEdit(out Paciente paciente, out InformacoesReposicao informacoesReposicao, out int quantidadeRequisitada, out string senhaImputada)
+        private void ImputEdit(Requisicao toEdit, out int quantidadeRequisitada, out string senhaImputada)
         {
-            informacoesReposicao = new InformacoesReposicao();
             Console.Clear();
 
-            paciente = repositorioPaciente.GetById(telaPaciente.ObterId(repositorioPaciente));
-
-            Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja desse remédio: ");
+            Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja de remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeRequisitada))
             {
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
-                Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja desse remédio: ");
+                Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja de remédio: ");
             }
-            informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            toEdit.informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
         }

@@ -84,9 +84,9 @@ namespace ControleDeMedicamentos.ConsoleApp
                 Console.WriteLine();
                 Console.WriteLine("   4  - Para gestão de Remedios.                                                  ");
                 Console.WriteLine();
-                Console.WriteLine("   5  - Para gestão de Requisições.                                               ");
+                Console.WriteLine("   5  - Para controle de Requisições.                                             ");
                 Console.WriteLine();
-                Console.WriteLine("   6  - Para gestão de Aquisições.                                                ");
+                Console.WriteLine("   6  - Para controle de Aquisições.                                              ");
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine("   S  - Para sair.                                                                ");

@@ -25,6 +25,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
         {
             id = idCounter++;            
             this.informacoesReposicao = informacoesReposicao;
+            this.quantidadeAdquirida = quantidadeAdquirida;
             this.informacoesReposicao.remedio.quantidadeDisponivel = informacoesReposicao.remedio.quantidadeDisponivel + quantidadeAdquirida;
         }
     }

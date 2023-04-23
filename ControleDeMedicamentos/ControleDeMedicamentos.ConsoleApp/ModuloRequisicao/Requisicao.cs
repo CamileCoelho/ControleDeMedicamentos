@@ -27,6 +27,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             id = idCounter++;
             this.paciente = paciente;
             this.informacoesReposicao = informacoesReposicao;
+            this.quantidadeRequisitada = quantidadeRequisitada;
             this.informacoesReposicao.remedio.quantidadeDisponivel = informacoesReposicao.remedio.quantidadeDisponivel - quantidadeRequisitada;
         }
     }
