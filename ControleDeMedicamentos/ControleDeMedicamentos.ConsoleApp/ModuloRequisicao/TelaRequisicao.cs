@@ -186,6 +186,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             paciente = repositorioPaciente.GetById(telaPaciente.ObterId(repositorioPaciente));
 
             informacoesReposicao.remedio = repositorioRemedio.GetById(telaRemedio.ObterId(repositorioRemedio));
+            informacoesReposicao.data = DateTime.Now;
 
             Console.Write("\n   Digite a quatidade de unidades que o paciente deseja desse remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeRequisitada))
@@ -201,7 +202,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
         private void ImputEdit(Requisicao toEdit, out int quantidadeRequisitada, out string senhaImputada)
         {
             Console.Clear();
-
+            toEdit.informacoesReposicao.data = DateTime.Now;
             Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja de remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeRequisitada))
             {

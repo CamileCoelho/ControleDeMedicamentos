@@ -30,20 +30,24 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
                 {
                     Console.Write("\n   Você possuí remédios com o estoque zerado ou em pouca quantidade. " +
                         "\n   Realize uma aquisição para repor seu estoque. ");
+                    Console.ReadLine();
                     return;
                 }
                 else if (r != null && r.quantidadeDisponivel == 0)
                 {
                     Console.Write("\n   Você possuí remédios com o estoque zerado. " +
                         "\n   Realize uma aquisição para repor seus remédios com o estoque zerado. ");
+                    Console.ReadLine();
+                    return;
                 }
                 else if (r != null && r.quantidadeDisponivel <= r.quantidadeMinima && r.quantidadeDisponivel != 0)
                 {
                     Console.Write("\n   Você possuí remédios em pouca quantidade em estoque. " +
                         "\n   Realize uma aquisição para repor seus remédios em pouca quantidade. ");
+                    Console.ReadLine();
+                    return;
                 }
-            }
-            Console.ReadLine();
+            }            
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
     }

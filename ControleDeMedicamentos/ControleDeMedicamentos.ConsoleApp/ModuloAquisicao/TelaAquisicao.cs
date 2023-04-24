@@ -171,6 +171,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
             Console.Clear();
 
             informacoesReposicao.remedio = repositorioRemedio.GetById(telaRemedio.ObterId(repositorioRemedio));
+            informacoesReposicao.data = DateTime.Now;
 
             Console.Write("\n   Digite a quatidade de unidades que deseja comprar desse remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeAdquirida))
