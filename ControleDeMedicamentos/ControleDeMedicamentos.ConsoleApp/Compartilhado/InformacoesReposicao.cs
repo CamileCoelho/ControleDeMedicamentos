@@ -19,11 +19,11 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             
         }
 
-        public InformacoesReposicao(Remedio remedio, Funcionario funcionario, int quantidadeRequisitada)
+        public InformacoesReposicao(Remedio remedio, Funcionario funcionario, int quantidadeRequisitada, DateTime data)
         {
             this.remedio = remedio;
             this.funcionario = funcionario;
-            data = DateTime.Now;
+            this.data = DateTime.Today;
         }
     }
 }

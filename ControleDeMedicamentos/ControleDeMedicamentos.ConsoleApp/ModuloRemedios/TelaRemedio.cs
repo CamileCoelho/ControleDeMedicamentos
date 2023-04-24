@@ -250,7 +250,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
         public int ObterId(RepositorioRemedio repositorioRemedio)
         {
             Console.Clear();
-            MostarListaRemedios(repositorioRemedio);
+            MostarListaRemediosDisponiveis(repositorioRemedio);
 
             Console.Write("\n   Digite o id do remédio que deseja (cada remédio possuí seu fornecedor): ");
             int id;
@@ -277,6 +277,27 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
             foreach (Remedio print in repositorioRemedio.GetAll())
             {
                 if (print != null)
+                {
+                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}", print.id, print.nome, print.fornecedor.informacoesPessoais.nome, print.quantidadeDisponivel, print.quantidadeMinima);
+                }
+            }
+        }
+
+        public void MostarListaRemediosDisponiveis(RepositorioRemedio repositorioRemedio)
+        {
+            Console.Clear();
+            Console.WriteLine("__________________________________________________________________________________________________________");
+            Console.WriteLine();
+            Console.WriteLine("                                    Lista de Remédios Disponíveis                                         ");
+            Console.WriteLine("__________________________________________________________________________________________________________");
+            Console.WriteLine();
+            Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}", "ID ", "  NOME ", "  FORNECEDOR ", "  DISPONÍVEL ", "  MÍNIMO DESEJADO ");
+            Console.WriteLine("__________________________________________________________________________________________________________");
+            Console.WriteLine();
+
+            foreach (Remedio print in repositorioRemedio.GetAll())
+            {
+                if (print != null && print.quantidadeDisponivel != 0)
                 {
                     Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}", print.id, print.nome, print.fornecedor.informacoesPessoais.nome, print.quantidadeDisponivel, print.quantidadeMinima);
                 }

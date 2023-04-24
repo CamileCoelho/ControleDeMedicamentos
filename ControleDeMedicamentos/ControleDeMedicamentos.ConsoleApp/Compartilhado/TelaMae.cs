@@ -1,4 +1,5 @@
 ﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.ModuloRemedios;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,33 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         {
             Console.ForegroundColor = cor;
             Console.WriteLine(mensagem);
+            Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+        }
+
+        public void ExibirAvisos(RepositorioRemedio repositorioRemedio)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            foreach (Remedio r in repositorioRemedio.GetAll())
+            {
+                if (r != null && r.quantidadeDisponivel == 0 && r.quantidadeDisponivel <= r.quantidadeMinima
+                    && r.quantidadeDisponivel != 0)
+                {
+                    Console.Write("\n   Você possuí remédios com o estoque zerado ou em pouca quantidade. " +
+                        "\n   Realize uma aquisição para repor seu estoque. ");
+                    return;
+                }
+                else if (r != null && r.quantidadeDisponivel == 0)
+                {
+                    Console.Write("\n   Você possuí remédios com o estoque zerado. " +
+                        "\n   Realize uma aquisição para repor seus remédios com o estoque zerado. ");
+                }
+                else if (r != null && r.quantidadeDisponivel <= r.quantidadeMinima && r.quantidadeDisponivel != 0)
+                {
+                    Console.Write("\n   Você possuí remédios em pouca quantidade em estoque. " +
+                        "\n   Realize uma aquisição para repor seus remédios em pouca quantidade. ");
+                }
+            }
             Console.ReadLine();
             Console.ForegroundColor = ConsoleColor.Cyan;
         }

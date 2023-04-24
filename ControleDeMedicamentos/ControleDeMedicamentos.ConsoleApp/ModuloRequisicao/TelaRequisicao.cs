@@ -155,9 +155,12 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             if (toEdit == null)
             {
                 ExibirMensagem("\n   Requisição não encontrada!", ConsoleColor.DarkRed);
+                return;
             }
             else
             {
+                toEdit.informacoesReposicao.remedio.quantidadeDisponivel = toEdit.informacoesReposicao.remedio.quantidadeDisponivel + toEdit.quantidadeRequisitada;
+                
                 ImputEdit(toEdit, out int quantidadeRequisitada, out string senhaImputada);
 
                 string valido = validador.ValidarRequisicao(toEdit.informacoesReposicao, quantidadeRequisitada, senhaImputada);
@@ -165,6 +168,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 if (valido == "REGISTRO_REALIZADO")
                 {
                     repositorioRequisicao.Update(toEdit, quantidadeRequisitada);
+                    toEdit.informacoesReposicao.remedio.quantidadeDisponivel = toEdit.informacoesReposicao.remedio.quantidadeDisponivel - quantidadeRequisitada;
                     ExibirMensagem("\n   Requisição editada com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
@@ -227,20 +231,20 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
         public void MostarListaRequisicoes(RepositorioRequisicao repositorioRequisicao)
         {
             Console.Clear();
-            Console.WriteLine("_____________________________________________________________________________________________");
+            Console.WriteLine("______________________________________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine("                                   Lista de Requisições!                                     ");
-            Console.WriteLine("_____________________________________________________________________________________________");
+            Console.WriteLine("                                            Lista de Requisições!                                                     ");
+            Console.WriteLine("______________________________________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine("{0,-5}|{1,-20}|{2,-20}|{3,-20}|{4,-20}|{5,-20}", "ID ", "  PACIENTE ", "  FUNCIONÁRIO ", "  REMÉDIO " , "  FORNECEDOR ", "  DATA ");
-            Console.WriteLine("_____________________________________________________________________________________________");
+            Console.WriteLine("{0,-5}|{1,-20}|{2,-20}|{3,-20}|{4,-20}|{5,-20}|{6,-20}", "ID ", "  PACIENTE ", "  FUNCIONÁRIO ", "  REMÉDIO " , "  QUANTIDADE " , "  FORNECEDOR ", "  DATA ");
+            Console.WriteLine("______________________________________________________________________________________________________________________");
             Console.WriteLine();
 
             foreach (Requisicao print in repositorioRequisicao.GetAll())
             {
                 if (print != null)
                 {
-                    Console.WriteLine("{0,-5}|{1,-20}|{2,-20}|{3,-20}|{4,-20}|{5,-20}", print.id, print.paciente.informacoesPessoais.nome, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.informacoesReposicao.data);
+                    Console.WriteLine("{0,-5}|{1,-20}|{2,-20}|{3,-20}|{4,-20}|{5,-20}|{6,-20}", print.id, print.paciente.informacoesPessoais.nome, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.quantidadeRequisitada, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.informacoesReposicao.data);
                 }
             }
         }

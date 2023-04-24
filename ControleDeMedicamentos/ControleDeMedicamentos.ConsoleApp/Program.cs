@@ -9,7 +9,7 @@ using ControleDeMedicamentos.ConsoleApp.ModuloRequisicao;
 
 namespace ControleDeMedicamentos.ConsoleApp
 {
-    internal class Program
+    internal class Program 
     {
         static void Main(string[] args)
         {
@@ -22,6 +22,7 @@ namespace ControleDeMedicamentos.ConsoleApp
 
             Validador validador = new (repositorioFornecedor, repositorioFuncionario, repositorioPaciente, repositorioRemedio, repositorioRequisicao, repositorioAquisicao);
 
+            TelaMae telaMae = new();
             TelaFuncionario telaFuncionario = new (repositorioFuncionario, validador);
             TelaPaciente telaPaciente = new (repositorioPaciente, validador);
             TelaFornecedor telaFornecedor = new (repositorioFornecedor, validador);
@@ -100,10 +101,13 @@ namespace ControleDeMedicamentos.ConsoleApp
                 {
                     if (opcaoInvalida)
                     {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine("\n   Opção inválida, tente novamente. ");
+                        Console.ForegroundColor = ConsoleColor.Cyan;
                         break;
                     }
                 }
+                telaMae.ExibirAvisos(repositorioRemedio);
                 return opcao;
             }
 
