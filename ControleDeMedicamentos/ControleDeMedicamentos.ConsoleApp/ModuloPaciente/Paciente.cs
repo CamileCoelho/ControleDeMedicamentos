@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 {
-    public class Paciente : EntidadeMae
+    public class Paciente : EntidadeBase
     {
         private static int idCounter = 1;
         public InformacoesPessoais informacoesPessoais { get; set; }
@@ -23,9 +23,16 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 
         public Paciente(InformacoesPessoais informacoesPessoais, string cpf)
         {
-            id = idCounter++;
             this.informacoesPessoais = informacoesPessoais;
             this.cpf = cpf;
+        }
+
+        public override void UpdateInfo(EntidadeBase updated)
+        {
+            Paciente toEdit = (Paciente)updated;
+
+            this.informacoesPessoais = toEdit.informacoesPessoais;
+            this.cpf = toEdit.cpf;
         }
     }
 }

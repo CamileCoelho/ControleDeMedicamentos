@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
 {
-    public class TelaRemedio : TelaMae
+    public class TelaRemedio : TelaBase<Remedio>
     {
         RepositorioRemedio repositorioRemedio;
         RepositorioFornecedor repositorioFornecedor;
@@ -31,7 +31,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
 
             do
             {
-                string opcao = MostrarMenu();
+                string opcao = MostrarMenuRemedios();
 
                 switch (opcao)
                 {
@@ -60,7 +60,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
                 }
             } while (continuar);
 
-            string MostrarMenu()
+            string MostrarMenuRemedios()
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Clear();
@@ -111,7 +111,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
             if (valido == "REGISTRO_REALIZADO")
             {
                 Remedio toAdd = new Remedio(nome, descricao, quantidadeDisponivel, quantidadeMinima, fornecedor);
-                repositorioRemedio.Create(toAdd);
+                repositorioRemedio.Insert(toAdd);
                 ExibirMensagem("\n   Remédio cadastrado com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
@@ -244,10 +244,10 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a quatidade limite para esse remédio: ");
             }
-            fornecedor = repositorioFornecedor.GetById(telaFornecedor.ObterId(repositorioFornecedor));
+            fornecedor = (Fornecedor)repositorioBase.GetById(telaFornecedor.ObterId(repositorioFornecedor));
         }
 
-        public int ObterId(RepositorioRemedio repositorioRemedio)
+        public override int ObterId(RepositorioBase<Remedio> repositorioBase)
         {
             Console.Clear();
             MostarListaRemediosDisponiveis(repositorioRemedio);
@@ -261,7 +261,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
             }
             return id;
         }
-
+        
         public void MostarListaRemedios(RepositorioRemedio repositorioRemedio)
         {
             Console.Clear();

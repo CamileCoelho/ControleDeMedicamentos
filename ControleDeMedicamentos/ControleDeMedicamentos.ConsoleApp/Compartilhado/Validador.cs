@@ -43,9 +43,9 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public bool ValidarSenha(string senha)
         {
             if (string.IsNullOrEmpty(senha) && string.IsNullOrWhiteSpace(senha) && senha.ToCharArray().Length >= 4)
-                return true;
-            else
                 return false;
+            else
+                return true;
         }
 
         public bool ValidaTelefone(string telefone)
@@ -144,19 +144,19 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             return "REGISTRO_REALIZADO";
         }
 
-        public string ValidarFunicionario(InformacoesPessoais informacoesPessoais, string cpf, string senha)
+        public string ValidarFunicionario(Funcionario imput)
         {
             Validador valida = new Validador();
             string mensagem = "";
-            string validarInfoPessoalCB = ValidarInfoPessoal(informacoesPessoais);
+            string validarInfoPessoalCB = ValidarInfoPessoal(imput.informacoesPessoais);
 
             if (validarInfoPessoalCB != "REGISTRO_REALIZADO")
                 mensagem += validarInfoPessoalCB;
 
-            if (valida.ValidaCPF(cpf))
+            if (valida.ValidaCPF(imput.cpf))
                 mensagem += " CPF_INVALIDO ";
 
-            if (valida.ValidarSenha(senha))
+            if (valida.ValidarSenha(imput.senha))
                 mensagem += " SENHA_INVALIDA ";
 
             if (mensagem != "")

@@ -10,9 +10,8 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
 {
-    public class Aquisicao : EntidadeMae
+    public class Aquisicao : EntidadeBase
     {
-        private static int idCounter = 1;
         public InformacoesReposicao informacoesReposicao { get; set; }
         public int quantidadeAdquirida { get; set; }
 
@@ -22,11 +21,23 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
         }
 
         public Aquisicao(InformacoesReposicao informacoesReposicao, int quantidadeAdquirida)
-        {
-            id = idCounter++;            
+        {     
             this.informacoesReposicao = informacoesReposicao;
             this.quantidadeAdquirida = quantidadeAdquirida;
             this.informacoesReposicao.remedio.quantidadeDisponivel = informacoesReposicao.remedio.quantidadeDisponivel + quantidadeAdquirida;
+        }
+
+        public override void UpdateInfo(EntidadeBase updated)
+        {
+            Aquisicao toEdit = (Aquisicao)updated;
+
+            this.informacoesReposicao = toEdit.informacoesReposicao;
+            this.quantidadeAdquirida = toEdit.quantidadeAdquirida;
+        }
+
+        public void Estornar()
+        {
+            this.informacoesReposicao.remedio.quantidadeDisponivel = (this.informacoesReposicao.remedio.quantidadeDisponivel - this.quantidadeAdquirida);
         }
     }
 }

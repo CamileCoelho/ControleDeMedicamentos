@@ -7,7 +7,7 @@ using ControleDeMedicamentos.ConsoleApp.ModuloRemedios;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
 {
-    public class TelaRequisicao : TelaMae
+    public class TelaRequisicao : TelaBase<Requisicao>
     {
         RepositorioRequisicao repositorioRequisicao;
         RepositorioPaciente repositorioPaciente;
@@ -20,7 +20,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
 
         public TelaRequisicao(RepositorioRequisicao repositorioRequisicao, RepositorioPaciente repositorioPaciente, RepositorioRemedio repositorioRemedio, RepositorioFuncionario repositorioFuncionario, TelaPaciente telaPaciente, TelaRemedio telaRemedio, TelaFuncionario telaFuncionario, Validador validador) 
         {
-            this.repositorioRequisicao = repositorioRequisicao;
+            this.repositorioRequisicao =  repositorioRequisicao;
             this.repositorioPaciente = repositorioPaciente;
             this.repositorioRemedio = repositorioRemedio;
             this.repositorioFuncionario = repositorioFuncionario;
@@ -36,7 +36,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
 
             do
             {
-                string opcao = MostrarMenu();
+                string opcao = MostrarMenuRequisicao();
 
                 switch (opcao)
                 {
@@ -56,7 +56,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 }
             } while (continuar);
 
-            string MostrarMenu()
+            string MostrarMenuRequisicao()
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Clear();
@@ -120,7 +120,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             if (valido == "REGISTRO_REALIZADO")
             {
                 Requisicao toAdd = new Requisicao(paciente, informacoesReposicao, quantidadeRequisitada);
-                repositorioRequisicao.Create(toAdd);
+                repositorioRequisicao.Insert(toAdd);
                 ExibirMensagem("\n   Requisição realizada com sucesso!", ConsoleColor.DarkGreen);
             }
             else
@@ -194,7 +194,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a quatidade de unidades que o paciente deseja desse remédio: ");
             }
-            informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
         }
@@ -209,15 +209,15 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja de remédio: ");
             }
-            toEdit.informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            toEdit.informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
         }
 
-        public int ObterId(RepositorioRequisicao repositorioRequisiscao)
+        public override int ObterId(RepositorioBase<Requisicao> repositorioBase)
         {
             Console.Clear();
-            MostarListaRequisicoes(repositorioRequisiscao);
+            MostarListaRequisicoes(repositorioRequisicao);
 
             Console.Write("\n   Digite o id da requisição: ");
             int id;

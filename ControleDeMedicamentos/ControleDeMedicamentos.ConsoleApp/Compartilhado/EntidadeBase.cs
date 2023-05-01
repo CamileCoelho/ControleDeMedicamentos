@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
 {
-    public class RepositorioMae
+    public abstract class EntidadeBase
     {
-        public List<Object> listaObjeto = new List<Object>();
+        public int id { get; set; }
+
+        public abstract void UpdateInfo(EntidadeBase valid);
     }
 }

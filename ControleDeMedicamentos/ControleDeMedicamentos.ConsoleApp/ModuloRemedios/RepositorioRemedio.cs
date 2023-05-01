@@ -1,8 +1,9 @@
-﻿using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
+﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
 {
-    public class RepositorioRemedio
+    public class RepositorioRemedio : RepositorioBase<Remedio>
     {
         List<Remedio> listaRemedio = new List<Remedio>();
 

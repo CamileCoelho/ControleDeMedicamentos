@@ -13,16 +13,15 @@ namespace ControleDeMedicamentos.ConsoleApp
     {
         static void Main(string[] args)
         {
-            RepositorioFornecedor repositorioFornecedor = new RepositorioFornecedor();
-            RepositorioFuncionario repositorioFuncionario = new RepositorioFuncionario();
-            RepositorioPaciente repositorioPaciente = new RepositorioPaciente();
-            RepositorioRemedio repositorioRemedio = new RepositorioRemedio();
-            RepositorioRequisicao repositorioRequisicao = new RepositorioRequisicao();
-            RepositorioAquisicao repositorioAquisicao = new RepositorioAquisicao();
+            RepositorioFornecedor repositorioFornecedor = new ();
+            RepositorioFuncionario repositorioFuncionario = new ();
+            RepositorioPaciente repositorioPaciente = new ();
+            RepositorioRemedio repositorioRemedio = new ();
+            RepositorioRequisicao repositorioRequisicao = new ();
+            RepositorioAquisicao repositorioAquisicao = new ();
 
             Validador validador = new (repositorioFornecedor, repositorioFuncionario, repositorioPaciente, repositorioRemedio, repositorioRequisicao, repositorioAquisicao);
 
-            TelaMae telaMae = new();
             TelaFuncionario telaFuncionario = new (repositorioFuncionario, validador);
             TelaPaciente telaPaciente = new (repositorioPaciente, validador);
             TelaFornecedor telaFornecedor = new (repositorioFornecedor, validador);
@@ -107,7 +106,7 @@ namespace ControleDeMedicamentos.ConsoleApp
                         break;
                     }
                 }
-                telaMae.ExibirAvisos(repositorioRemedio);
+                telaRemedio.ExibirAvisos(repositorioRemedio);
                 return opcao;
             }
 
@@ -125,11 +124,11 @@ namespace ControleDeMedicamentos.ConsoleApp
                 Remedio Rivotrilzinho = new("Rivotril", "Remedio De Aluno", 100, 50, Camile);
                 Remedio Ciclobenzaprininha = new("Ciclobenzaprina", "Dor De Cabeça", 100, 30, Camile);
 
-                repositorioFuncionario.Create(Tiago);
-                repositorioPaciente.Create(Rech);
-                repositorioFornecedor.Create(Camile);
-                repositorioRemedio.Create(Rivotrilzinho);
-                repositorioRemedio.Create(Ciclobenzaprininha);
+                repositorioFuncionario.Insert(Tiago);
+                repositorioPaciente.Insert(Rech);
+                repositorioFornecedor.Insert(Camile);
+                repositorioRemedio.Insert(Rivotrilzinho);
+                repositorioRemedio.Insert(Ciclobenzaprininha);
             }
         }
     }

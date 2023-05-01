@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
 {
-    public class RepositorioRequisicao
+    public class RepositorioRequisicao : RepositorioBase<Requisicao>
     {
         List<Requisicao> listaRequisicao = new List<Requisicao>();
 

@@ -1,5 +1,6 @@
 ﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.ModuloAquisicao;
 using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
 using System;
 using System.Collections.Generic;
@@ -9,12 +10,14 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 {
-    public class TelaPaciente : TelaMae
+    public class TelaPaciente : TelaBase<Paciente>
     {
         RepositorioPaciente repositorioPaciente;
 
         public TelaPaciente(RepositorioPaciente repositorioPaciente, Validador validador)
         {
+            nomeEntidade = "Paciente";
+            sufixo = "s";
             this.repositorioPaciente = repositorioPaciente;
             this.validador = validador;
         }
@@ -47,39 +50,6 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
                         continue;
                 }
             } while (continuar);
-
-            string MostrarMenu()
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Clear();
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.WriteLine("                              Gestão de Pacientes!                                ");
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.WriteLine("   Digite:                                                                        ");
-                Console.WriteLine();
-                Console.WriteLine("   1  - Para cadastrar um novo paciente.                                          ");
-                Console.WriteLine("   2  - Para visualizar seus pacientes cadastrados.                               ");
-                Console.WriteLine("   3  - Para editar o cadastro de um paciente.                                    ");
-                Console.WriteLine("   4  - Para excluir o cadastro de um paciente.                                   ");
-                Console.WriteLine();
-                Console.WriteLine("   5  - Para voltar ao menu principal.                                            ");
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.Write("   Opção escolhida: ");
-                string opcao = Console.ReadLine().ToUpper();
-                bool opcaoInvalida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
-                while (opcaoInvalida)
-                {
-                    if (opcaoInvalida)
-                    {
-                        ExibirMensagem("\n   Opção inválida, tente novamente. ", ConsoleColor.DarkRed);
-                        break;
-                    }
-                }
-                return opcao;
-            }
         }
 
         private void Cadastrar()
@@ -91,7 +61,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
             if (valido == "REGISTRO_REALIZADO")
             {
                 Paciente toAdd = new Paciente(informacoesPessoais, cpf);
-                repositorioPaciente.Create(toAdd); 
+                repositorioPaciente.Insert(toAdd); 
                 ExibirMensagem("\n   Paciente cadastrado com sucesso!", ConsoleColor.DarkGreen);
             }
             else
@@ -186,7 +156,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 
         }
 
-        public int ObterId(RepositorioPaciente repositorioPaciente)
+        public override int ObterId(RepositorioBase<Paciente> repositorioBase)
         {
             Console.Clear();
             MostarListaPacientes(repositorioPaciente);

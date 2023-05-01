@@ -2,7 +2,7 @@
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 {
-    public class RepositorioPaciente
+    public class RepositorioPaciente : RepositorioBase <Paciente>
     {
         List<Paciente> listaPaciente = new List<Paciente>();
 

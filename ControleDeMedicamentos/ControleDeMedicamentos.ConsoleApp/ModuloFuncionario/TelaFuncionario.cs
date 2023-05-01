@@ -1,5 +1,6 @@
 ﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using ControleDeMedicamentos.ConsoleApp.ModuloAquisicao;
 using ControleDeMedicamentos.ConsoleApp.ModuloPaciente;
 using System;
 using System.Collections.Generic;
@@ -9,13 +10,17 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
 {
-    public class TelaFuncionario : TelaMae
+    public class TelaFuncionario : TelaBase<Funcionario>
     {
+        RepositorioBase<Funcionario> repositorioBase;
         RepositorioFuncionario repositorioFuncionario;
 
         public TelaFuncionario(RepositorioFuncionario repositorioFuncionario, Validador validador)
         {
+            nomeEntidade = "Funcionário";
+            sufixo = "s";
             this.repositorioFuncionario = repositorioFuncionario;
+            repositorioBase = repositorioFuncionario;
             this.validador = validador;
         }
 
@@ -47,51 +52,19 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
                         continue;
                 }
             } while (continuar);
-
-            string MostrarMenu()
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Clear();
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.WriteLine("                              Gestão de Funcionários!                             ");
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.WriteLine("   Digite:                                                                        ");
-                Console.WriteLine();
-                Console.WriteLine("   1  - Para cadastrar um novo funcionário.                                       ");
-                Console.WriteLine("   2  - Para visualizar seus funcionários cadastrados.                            ");
-                Console.WriteLine("   3  - Para editar o cadastro de um funcionário.                                 ");
-                Console.WriteLine("   4  - Para excluir o cadastro de um funcionário.                                ");
-                Console.WriteLine();
-                Console.WriteLine("   5  - Para voltar ao menu principal.                                            ");
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.Write("   Opção escolhida: ");
-                string opcao = Console.ReadLine().ToUpper();
-                bool opcaoInvalida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
-                while (opcaoInvalida)
-                {
-                    if (opcaoInvalida)
-                    {
-                        ExibirMensagem("\n   Opção inválida, tente novamente. ", ConsoleColor.DarkRed);
-                        break;
-                    }
-                }
-                return opcao;
-            }
         }
 
         private void Cadastrar()
         {
             Imput(out InformacoesPessoais informacoesPessoais, out string cpf, out string senha);
 
-            string valido = validador.ValidarFunicionario(informacoesPessoais, cpf, senha);
+            Funcionario toAdd = new(informacoesPessoais, cpf, senha);
+
+            string valido = validador.ValidarFunicionario(toAdd);
 
             if (valido == "REGISTRO_REALIZADO" )
             {
-                Funcionario toAdd = new Funcionario(informacoesPessoais, cpf, senha);
-                repositorioFuncionario.Create(toAdd);
+                repositorioFuncionario.Insert(toAdd);
                 ExibirMensagem("\n   Funcionário cadastrado com sucesso!" , ConsoleColor.DarkGreen);
             }
             else
@@ -121,7 +94,8 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
                 return;
             }
 
-            Funcionario toEdit = repositorioFuncionario.GetById(ObterId(repositorioFuncionario));
+            Funcionario toEdit = (Funcionario)repositorioBase.GetById(ObterId(repositorioFuncionario));
+
             if (toEdit == null)
             {
                 ExibirMensagem("\n   Funcionário não encontrado!", ConsoleColor.DarkRed);
@@ -130,11 +104,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
             {
                 Imput(out InformacoesPessoais informacoesPessoais, out string cpf, out string senha);
 
-                string valido = validador.ValidarFunicionario(informacoesPessoais, cpf, senha);
+                Funcionario imput = new(informacoesPessoais, cpf, senha);
+
+                string valido = validador.ValidarFunicionario(imput);
 
                 if (valido == "REGISTRO_REALIZADO")
                 {
-                    repositorioFuncionario.Update(toEdit, informacoesPessoais, cpf);
+                    repositorioBase.Update(toEdit, imput);
                     ExibirMensagem("\n   Funcionario editado com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
@@ -153,7 +129,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
                 return;
             }
 
-            Funcionario toDelete = repositorioFuncionario.GetById(ObterId(repositorioFuncionario));
+            Funcionario toDelete = (Funcionario)repositorioBase.GetById(ObterId(repositorioFuncionario));
 
             string validacaoExclusao = validador.PermitirExclusaoDoFuncionario(toDelete);
 
@@ -186,7 +162,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
             senha = Console.ReadLine();
         }
 
-        public int ObterId(RepositorioFuncionario repositorioFuncionario)
+        public override int ObterId(RepositorioBase<Funcionario> repositorioBase)
         {
             Console.Clear();
             MostarListaFuncionarios(repositorioFuncionario);
@@ -200,7 +176,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
             }
             return id;
         }
-        
+
         public void MostarListaFuncionarios(RepositorioFuncionario repositorioFuncionario)
         {
             Console.Clear();

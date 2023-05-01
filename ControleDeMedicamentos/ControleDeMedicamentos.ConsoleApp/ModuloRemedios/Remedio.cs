@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
 {
-    public class Remedio : EntidadeMae
+    public class Remedio : EntidadeBase
     {
         private static int idCounter = 1;
         public string nome { get; set; }
@@ -25,12 +25,22 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
         }
         public Remedio(string nome, string descricao, int quantidadeDisponivel, int quantidadeMinima, Fornecedor fornecedor)
         {
-            id = idCounter++;
             this.nome = nome;
             this.descricao = descricao;
             this.quantidadeDisponivel = quantidadeDisponivel; 
             this.quantidadeMinima = quantidadeMinima;   
             this.fornecedor = fornecedor;
-        }        
+        }
+
+        public override void UpdateInfo(EntidadeBase updated)
+        {
+            Remedio toEdit = (Remedio)updated;
+
+            this.nome = toEdit.nome;
+            this.descricao = toEdit.descricao;
+            this.quantidadeDisponivel = toEdit.quantidadeDisponivel;
+            this.quantidadeMinima = toEdit.quantidadeMinima;
+            this.fornecedor = toEdit.fornecedor;
+        }
     }
 }

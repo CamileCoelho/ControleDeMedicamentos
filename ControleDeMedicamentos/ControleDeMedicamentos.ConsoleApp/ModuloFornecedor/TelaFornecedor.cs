@@ -10,13 +10,15 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
 {
-    public class TelaFornecedor : TelaMae
+    public class TelaFornecedor : TelaBase<Fornecedor>
     {
         RepositorioFornecedor repositorioFornecedor;
         Validador validador;
 
         public TelaFornecedor(RepositorioFornecedor repositorioFornecedor, Validador validador)
         {
+            nomeEntidade = "Fornecedor";
+            sufixo = "es";
             this.repositorioFornecedor = repositorioFornecedor;
             this.validador = validador;
         }
@@ -49,39 +51,6 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
                         continue;
                 }
             } while (continuar);
-
-            string MostrarMenu()
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Clear();
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.WriteLine("                           Gestão de Fornecedores!                                ");
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.WriteLine("   Digite:                                                                        ");
-                Console.WriteLine();
-                Console.WriteLine("   1  - Para cadastrar um novo fornecedor.                                        ");
-                Console.WriteLine("   2  - Para visualizar seus fornecedores cadastrados.                            ");
-                Console.WriteLine("   3  - Para editar o cadastro de um fornecedor.                                  ");
-                Console.WriteLine("   4  - Para excluir o cadastro de um fornecedor.                                 ");
-                Console.WriteLine();
-                Console.WriteLine("   5  - Para voltar ao menu principal.                                            ");
-                Console.WriteLine("__________________________________________________________________________________");
-                Console.WriteLine();
-                Console.Write("   Opção escolhida: ");
-                string opcao = Console.ReadLine().ToUpper();
-                bool opcaoInvalida = opcao != "1" && opcao != "2" && opcao != "3" && opcao != "4" && opcao != "5";
-                while (opcaoInvalida)
-                {
-                    if (opcaoInvalida)
-                    {
-                        ExibirMensagem("\n   Opção inválida, tente novamente. ", ConsoleColor.DarkRed);
-                        break;
-                    }
-                }
-                return opcao;
-            }
         }
 
         private void Cadastrar()
@@ -93,7 +62,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
             if (valido == "REGISTRO_REALIZADO")
             {
                 Fornecedor toAdd = new Fornecedor(informacoesPessoais,cnpj);
-                repositorioFornecedor.Create(toAdd);
+                repositorioFornecedor.Insert(toAdd);
                 ExibirMensagem("\n   Fornecedor cadastrado com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
@@ -123,7 +92,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
                 return;
             }
 
-            Fornecedor toEdit = repositorioFornecedor.GetById(ObterId(repositorioFornecedor));
+            Fornecedor toEdit = (Fornecedor)repositorioBase.GetById(ObterId(repositorioFornecedor));
 
             if (toEdit == null)
             {
@@ -156,7 +125,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
                 return;
             }
 
-            Fornecedor toDelete = repositorioFornecedor.GetById(ObterId(repositorioFornecedor));
+            Fornecedor toDelete = (Fornecedor)repositorioBase.GetById(ObterId(repositorioFornecedor));
 
             string validacaoExclusao = validador.PermitirExclusaoDoFornecedor(toDelete);
 
@@ -187,7 +156,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
             cnpj = Console.ReadLine();
         }
 
-        public int ObterId(RepositorioFornecedor repositorioFornecedor)
+        public override int ObterId(RepositorioBase<Fornecedor> repositorioBase)
         {
             Console.Clear();
             MostarListaFornecedores(repositorioFornecedor);
@@ -202,7 +171,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
             return id;
         }
 
-        public void MostarListaFornecedores(RepositorioFornecedor repositorioFornecedor)
+        public void MostarListaFornecedores(RepositorioBase<Fornecedor> repositorioBase)
         {
             Console.Clear();
             Console.WriteLine("_____________________________________________________________________________________________");

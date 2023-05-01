@@ -1,15 +1,12 @@
 ﻿using ControleDeMedicamentos.ConsoleApp.Compartilhado;
+using System.Diagnostics.Metrics;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
 {
-    public class RepositorioFornecedor
+    public class RepositorioFornecedor : RepositorioBase<Fornecedor>
     {
-        List<Fornecedor> listaFornecedor = new List<Fornecedor>();
 
-        public void Create(Fornecedor toAdd)
-        {
-            listaFornecedor.Add(toAdd);
-        }
+        List<Fornecedor> listaFornecedor = new List<Fornecedor>();
 
         public void Update(Fornecedor toEdit, InformacoesPessoais informacoesPessoais, string cnpj)
         {
@@ -19,7 +16,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
 
         public void Delete(Fornecedor toDelete)
         {
-            listaFornecedor.Remove(toDelete);               
+            listaFornecedor.Remove(toDelete);
         }
 
         public List<Fornecedor> GetAll()

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
 {
-    public class TelaAquisicao : TelaMae
+    public class TelaAquisicao : TelaBase<Aquisicao>
     {
         RepositorioAquisicao repositorioAquisicao;
         RepositorioRemedio repositorioRemedio;
@@ -37,7 +37,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
 
             do
             {
-                string opcao = MostrarMenu();
+                string opcao = MostrarMenuAquisicao();
 
                 switch (opcao)
                 {
@@ -57,7 +57,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                 }
             } while (continuar);
 
-            string MostrarMenu()
+            string MostrarMenuAquisicao()
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Clear();
@@ -109,7 +109,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
             if (valido == "REGISTRO_REALIZADO")
             {
                 Aquisicao toAdd = new Aquisicao(informacoesReposicao, quantidadeAdquirida);
-                repositorioAquisicao.Create(toAdd);
+                repositorioAquisicao.Insert(toAdd);
                 ExibirMensagem("\n   Aquisição realizada com sucesso!", ConsoleColor.DarkGreen);
             }
             else
@@ -148,7 +148,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                 return;
             }
 
-            toDelete.informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            toDelete.informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             string senhaImputada = Console.ReadLine();
 
@@ -179,24 +179,9 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a quatidade de unidades que deseja comprar desse remédio: ");
             }
-            informacoesReposicao.funcionario = repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
-        }
-
-        public int ObterId(RepositorioAquisicao repositorioAquisicao)
-        {
-            Console.Clear();
-            MostarListaAquisicoes(repositorioAquisicao);
-
-            Console.Write("\n   Digite o id da aquisição: ");
-            int id;
-            while (!int.TryParse(Console.ReadLine(), out id))
-            {
-                ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed); 
-                Console.Write("\n   Digite o id da aquisição: ");
-            }
-            return id;
         }
 
         public void MostarListaAquisicoes(RepositorioAquisicao repositorioAquisicao)
@@ -218,6 +203,21 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                     Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}|{5,-25}", print.id, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.quantidadeAdquirida, print.informacoesReposicao.data);
                 }
             }
+        }
+
+        public override int ObterId(RepositorioBase<Aquisicao> repositorioBase)
+        {
+            Console.Clear();
+            MostarListaAquisicoes(repositorioAquisicao);
+
+            Console.Write("\n   Digite o id da aquisição: ");
+            int id;
+            while (!int.TryParse(Console.ReadLine(), out id))
+            {
+                ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
+                Console.Write("\n   Digite o id da aquisição: ");
+            }
+            return id;
         }
     }
 }
