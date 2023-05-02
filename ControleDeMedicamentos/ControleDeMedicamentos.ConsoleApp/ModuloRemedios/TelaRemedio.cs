@@ -13,6 +13,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
 {
     public class TelaRemedio : TelaBase<Remedio>
     {
+        RepositorioBase<Remedio> repositorioBase;
         RepositorioRemedio repositorioRemedio;
         RepositorioFornecedor repositorioFornecedor;
         TelaFornecedor telaFornecedor;
@@ -20,6 +21,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
         public TelaRemedio(RepositorioRemedio repositorioRemedio, RepositorioFornecedor repositorioFornecedor, TelaFornecedor telaFornecedor, Validador validador)
         {
             this.repositorioRemedio = repositorioRemedio;
+            repositorioBase = repositorioRemedio;
             this.repositorioFornecedor = repositorioFornecedor;
             this.telaFornecedor = telaFornecedor;
             this.validador = validador;
@@ -105,12 +107,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
         private void Cadastrar()
         {
             Imput(out string nome, out string descricao, out int quantidadeDisponivel, out int quantidadeMinima, out Fornecedor fornecedor);
+
+            Remedio toAdd = new(nome, descricao, quantidadeDisponivel, quantidadeMinima, fornecedor);
            
-            string valido = validador.ValidarRemedio(nome, descricao);
+            string valido = validador.ValidarRemedio(toAdd);
 
             if (valido == "REGISTRO_REALIZADO")
             {
-                Remedio toAdd = new Remedio(nome, descricao, quantidadeDisponivel, quantidadeMinima, fornecedor);
                 repositorioRemedio.Insert(toAdd);
                 ExibirMensagem("\n   Remédio cadastrado com sucesso! ", ConsoleColor.DarkGreen);
             }
@@ -141,7 +144,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
                 return;
             }
 
-            Remedio toEdit = repositorioRemedio.GetById(ObterId(repositorioRemedio));
+            Remedio toEdit = (Remedio)repositorioBase.GetById(ObterId(repositorioRemedio));
 
             if (toEdit == null)
             {
@@ -151,11 +154,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
             {
                 Imput(out string nome, out string descricao, out int quantidadeDisponivel, out int quantidadeMinima, out Fornecedor fornecedor);
 
-                string valido = validador.ValidarRemedio(nome, descricao);
+                Remedio imput = new(nome, descricao, quantidadeDisponivel, quantidadeMinima, fornecedor);
+
+                string valido = validador.ValidarRemedio(imput);
 
                 if (valido == "REGISTRO_REALIZADO")
                 {
-                    repositorioRemedio.Update(toEdit, nome, descricao, quantidadeDisponivel, quantidadeMinima, fornecedor);
+                    repositorioRemedio.Update(toEdit, imput);
                     ExibirMensagem("\n   Remédio editado com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
@@ -174,18 +179,18 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
                 return;
             }
 
-            Remedio toDelete = repositorioRemedio.GetById(ObterId(repositorioRemedio));
+            Remedio toDelete = (Remedio)repositorioBase.GetById(ObterId(repositorioRemedio));
 
-            string validacaoExclusao = validador.PermitirExclusaoDoRemedio(toDelete);
+            string valido = validador.PermitirExclusaoDoRemedio(toDelete);
 
-            if (validacaoExclusao == "SUCESSO!")
+            if (valido == "SUCESSO!")
             {
                 repositorioRemedio.Delete(toDelete);
                 ExibirMensagem("\n   Remédio excluido com sucesso!", ConsoleColor.DarkGreen);
             }
             else
             {
-                ExibirMensagem("\n   Remédio não excluido: " + validacaoExclusao, ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Remédio não excluido: " + valido, ConsoleColor.DarkRed);
             }
         }
 

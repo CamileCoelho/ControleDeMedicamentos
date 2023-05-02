@@ -14,9 +14,10 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
 {
     public class TelaAquisicao : TelaBase<Aquisicao>
     {
+        RepositorioBase<Aquisicao> repositorioBase;
         RepositorioAquisicao repositorioAquisicao;
-        RepositorioRemedio repositorioRemedio;
-        RepositorioFuncionario repositorioFuncionario;
+        RepositorioBase<Remedio> repositorioRemedio;
+        RepositorioBase<Funcionario> repositorioFuncionario;
         TelaRemedio telaRemedio;
         TelaFuncionario telaFuncionario;
         Validador validador;
@@ -24,6 +25,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
         public TelaAquisicao(RepositorioAquisicao repositorioAquisicao, RepositorioRemedio repositorioRemedio, RepositorioFuncionario repositorioFuncionario, TelaRemedio telaRemedio, TelaFuncionario telaFuncionario, Validador validador)
         {
             this.repositorioAquisicao = repositorioAquisicao;
+            repositorioBase = repositorioAquisicao;
             this.repositorioRemedio = repositorioRemedio;
             this.repositorioFuncionario = repositorioFuncionario;
             this.telaRemedio = telaRemedio;
@@ -104,11 +106,12 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
 
             Imput( out InformacoesReposicao informacoesReposicao, out int quantidadeAdquirida, out string senhaImputada);
 
-            string valido = validador.ValidarAquisicao(informacoesReposicao, senhaImputada);
+            Aquisicao toAdd = new(informacoesReposicao, quantidadeAdquirida);
+
+            string valido = validador.ValidarAquisicao(toAdd, senhaImputada);
 
             if (valido == "REGISTRO_REALIZADO")
             {
-                Aquisicao toAdd = new Aquisicao(informacoesReposicao, quantidadeAdquirida);
                 repositorioAquisicao.Insert(toAdd);
                 ExibirMensagem("\n   Aquisição realizada com sucesso!", ConsoleColor.DarkGreen);
             }
@@ -139,7 +142,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                 return;
             }
 
-            Aquisicao toDelete = repositorioAquisicao.GetById(ObterId(repositorioAquisicao));
+            Aquisicao toDelete = (Aquisicao)repositorioBase.GetById(ObterId(repositorioAquisicao));
 
             if (toDelete.quantidadeAdquirida > toDelete.informacoesReposicao.remedio.quantidadeDisponivel)
             {
@@ -170,8 +173,8 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
             informacoesReposicao = new InformacoesReposicao();
             Console.Clear();
 
-            informacoesReposicao.remedio = repositorioRemedio.GetById(telaRemedio.ObterId(repositorioRemedio));
-            informacoesReposicao.data = DateTime.Now;
+            informacoesReposicao.remedio = (Remedio)repositorioRemedio.GetById(telaRemedio.ObterId(repositorioRemedio));
+            informacoesReposicao.data = DateTime.Now.Date;
 
             Console.Write("\n   Digite a quatidade de unidades que deseja comprar desse remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeAdquirida))
@@ -179,7 +182,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a quatidade de unidades que deseja comprar desse remédio: ");
             }
-            informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            informacoesReposicao.funcionario = (Funcionario)repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
         }
@@ -200,7 +203,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
             {
                 if (print != null)
                 {
-                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}|{5,-25}", print.id, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.quantidadeAdquirida, print.informacoesReposicao.data);
+                    Console.WriteLine("{0,-5}|{1,-25}|{2,-25}|{3,-25}|{4,-25}|{5,-25}", print.id, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.quantidadeAdquirida, print.informacoesReposicao.data.ToString("dd/MM/yyyy"));
                 }
             }
         }

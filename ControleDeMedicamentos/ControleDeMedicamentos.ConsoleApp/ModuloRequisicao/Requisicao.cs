@@ -34,7 +34,11 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
         public override void UpdateInfo(EntidadeBase updated)
         {
             Requisicao toEdit = (Requisicao)updated;
+            UpdateValue(toEdit);
+        }
 
+        private void UpdateValue(Requisicao toEdit)
+        {
             if (toEdit.quantidadeRequisitada < quantidadeRequisitada)
                 toEdit.informacoesReposicao.remedio.quantidadeDisponivel = toEdit.informacoesReposicao.remedio.quantidadeDisponivel + (quantidadeRequisitada - toEdit.quantidadeRequisitada);
             else

@@ -30,8 +30,8 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
         {
             Fornecedor toEdit = (Fornecedor)updated;
 
-            this.informacoesPessoais = toEdit.informacoesPessoais;
-            this.cnpj = toEdit.cnpj;
+            informacoesPessoais = toEdit.informacoesPessoais;
+            cnpj = toEdit.cnpj;
         }
     }
 }

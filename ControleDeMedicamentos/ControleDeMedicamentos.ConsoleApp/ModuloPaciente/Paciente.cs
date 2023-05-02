@@ -31,8 +31,8 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
         {
             Paciente toEdit = (Paciente)updated;
 
-            this.informacoesPessoais = toEdit.informacoesPessoais;
-            this.cpf = toEdit.cpf;
+            informacoesPessoais = toEdit.informacoesPessoais;
+            cpf = toEdit.cpf;
         }
     }
 }

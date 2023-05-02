@@ -51,7 +51,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public bool ValidaTelefone(string telefone)
         {
             // formato (XX)XXXXX-XXXX
-            Regex Rgx = new Regex(@"^\(\d{2}\)\d{5}-\d{4}$");
+            Regex Rgx = new(@"^\(\d{2}\)\d{5}-\d{4}$");
 
             if (Rgx.IsMatch(telefone))
                 return false;
@@ -62,7 +62,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public bool ValidaCPF(string cpf)
         {
             // formato XXX.XXX.XXX-XX ou XXXXXXXXXXX
-            Regex Rgx = new Regex(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$");
+            Regex Rgx = new(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$|^\d{11}$");
 
             if (Rgx.IsMatch(cpf))
                 return false;
@@ -73,7 +73,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public bool ValidaCNPJ(string cnpj)
         {
             // formato XX.XXX.XXX/XXXX-XX ou XXXXXXXXXXXXXX
-            Regex Rgx = new Regex(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$|^\d{14}$");
+            Regex Rgx = new(@"^\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}$|^\d{14}$");
 
             if (Rgx.IsMatch(cnpj))
                 return false;
@@ -84,7 +84,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public bool ValidaFormatoEmail(string email)
         {
             // formato permitido: qualquer coisa antes do "@" seguido por pelo menos uma letra depois
-            Regex Rgx = new Regex(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
+            Regex Rgx = new(@"^[^\s@]+@[^\s@]+\.[^\s@]+$");
 
             if (Rgx.IsMatch(email))
                 return false;
@@ -95,7 +95,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
         public bool ValidaEmail(string email)
         {
             // formato permitido: qualquer coisa antes do "@" seguido por pelo menos um caractere depois
-            Regex Rgx = new Regex(@"^[^\s@]+@[^\s@]+$");
+            Regex Rgx = new(@"^[^\s@]+@[^\s@]+$");
 
             if (Rgx.IsMatch(email))
                 return false;
@@ -105,7 +105,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
 
         public string ValidarInfoPessoal(InformacoesPessoais informacoesPessoais)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
 
             if (valida.ValidarString(informacoesPessoais.nome))
@@ -126,16 +126,16 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             return "REGISTRO_REALIZADO";
         }
 
-        public string ValidarPaciente(InformacoesPessoais informacoesPessoais, string cpf)
+        public string ValidarPaciente(Paciente imput)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
-            string validarInfoPessoalCB = ValidarInfoPessoal(informacoesPessoais);
+            string validarInfoPessoalCB = ValidarInfoPessoal(imput.informacoesPessoais);
 
             if (validarInfoPessoalCB != "REGISTRO_REALIZADO")
                 mensagem += validarInfoPessoalCB;
 
-            if (valida.ValidaCPF(cpf))
+            if (valida.ValidaCPF(imput.cpf))
                 mensagem += " CPF_INVALIDO ";
 
             if (mensagem != "")
@@ -146,7 +146,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
 
         public string ValidarFunicionario(Funcionario imput)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
             string validarInfoPessoalCB = ValidarInfoPessoal(imput.informacoesPessoais);
 
@@ -165,16 +165,16 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             return "REGISTRO_REALIZADO";
         }
 
-        public string ValidarFornecedor(InformacoesPessoais informacoesPessoais, string cnpj)
+        public string ValidarFornecedor(Fornecedor imput)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
-            string validarInfoPessoalCB = ValidarInfoPessoal(informacoesPessoais);
+            string validarInfoPessoalCB = ValidarInfoPessoal(imput.informacoesPessoais);
 
             if (validarInfoPessoalCB != "REGISTRO_REALIZADO")
                 mensagem += validarInfoPessoalCB;
 
-            if (valida.ValidaCNPJ(cnpj))
+            if (valida.ValidaCNPJ(imput.cnpj))
                 mensagem += " CNPJ_INVALIDO ";
 
             if (mensagem != "")
@@ -183,19 +183,19 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             return "REGISTRO_REALIZADO";
         }
 
-        public string ValidarRequisicao(InformacoesReposicao informacoesReposicao, int quantidadeDesejada, string senhaImputada)
+        public string ValidarRequisicao(Requisicao toAdd, string senhaImputada)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
 
-            if (informacoesReposicao.remedio == null)
+            if (toAdd.informacoesReposicao.remedio == null)
                 mensagem += " REMEDIO_INVALIDO ";
-            else if (informacoesReposicao.remedio.quantidadeDisponivel < quantidadeDesejada)
+            else if (toAdd.informacoesReposicao.remedio.quantidadeDisponivel < toAdd.quantidadeRequisitada)
                 mensagem += " QUANTIDADE_INDISPONÍVEL ";
 
-            if (informacoesReposicao.funcionario == null)
+            if (toAdd.informacoesReposicao.funcionario == null)
                 mensagem += " FUNCIONARIO_INVALIDO ";
-            else if (valida.ValidarString(senhaImputada) || informacoesReposicao.funcionario.senha != senhaImputada)
+            else if (valida.ValidarString(senhaImputada) || toAdd.informacoesReposicao.funcionario.senha != senhaImputada)
                 mensagem += " SENHA_ERRADA ";
 
             if (mensagem != "")
@@ -204,17 +204,17 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             return "REGISTRO_REALIZADO";
         }
 
-        public string ValidarAquisicao(InformacoesReposicao informacoesReposicao, string senhaImputada)
+        public string ValidarAquisicao(Aquisicao imput, string senhaImputada)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
 
-            if (informacoesReposicao.funcionario == null)
+            if (imput.informacoesReposicao.funcionario == null)
                 mensagem += " FUNCIONARIO_INVALIDO ";
-            else if (valida.ValidarString(senhaImputada) || informacoesReposicao.funcionario.senha != senhaImputada)
+            else if (valida.ValidarString(senhaImputada) || imput.informacoesReposicao.funcionario.senha != senhaImputada)
                 mensagem += " SENHA_ERRADA ";
 
-            if (informacoesReposicao.remedio == null)
+            if (imput.informacoesReposicao.remedio == null)
                 mensagem += " REMEDIO_INVALIDO ";                      
 
             if (mensagem != "")
@@ -223,15 +223,15 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             return "REGISTRO_REALIZADO";
         }
 
-        public string ValidarRemedio(string nome, string descricao)
+        public string ValidarRemedio(Remedio imput)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
 
-            if (valida.ValidarString(nome))
+            if (valida.ValidarString(imput.nome))
                 mensagem += " NOME_INVALIDO ";
 
-            if (valida.ValidarString(descricao))
+            if (valida.ValidarString(imput.descricao))
                 mensagem += " DESCRICAO_INVALIDA ";
 
             if (mensagem != "")
@@ -290,7 +290,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
 
         public string PermitirExclusaoAquisicao(Aquisicao toDelete, string senhaImputada)
         {
-            Validador valida = new Validador();
+            Validador valida = new();
             string mensagem = "";
 
             if (toDelete.informacoesReposicao.funcionario == null)

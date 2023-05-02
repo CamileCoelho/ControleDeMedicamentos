@@ -36,11 +36,11 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRemedios
         {
             Remedio toEdit = (Remedio)updated;
 
-            this.nome = toEdit.nome;
-            this.descricao = toEdit.descricao;
-            this.quantidadeDisponivel = toEdit.quantidadeDisponivel;
-            this.quantidadeMinima = toEdit.quantidadeMinima;
-            this.fornecedor = toEdit.fornecedor;
+            nome = toEdit.nome;
+            descricao = toEdit.descricao;
+            quantidadeDisponivel = toEdit.quantidadeDisponivel;
+            quantidadeMinima = toEdit.quantidadeMinima;
+            fornecedor = toEdit.fornecedor;
         }
     }
 }

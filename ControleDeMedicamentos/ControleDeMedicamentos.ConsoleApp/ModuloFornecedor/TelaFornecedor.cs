@@ -12,14 +12,15 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
 {
     public class TelaFornecedor : TelaBase<Fornecedor>
     {
+        RepositorioBase<Fornecedor> repositorioBase;
         RepositorioFornecedor repositorioFornecedor;
-        Validador validador;
 
         public TelaFornecedor(RepositorioFornecedor repositorioFornecedor, Validador validador)
         {
-            nomeEntidade = "Fornecedor";
+            nomeEntidade = "fornecedor";
             sufixo = "es";
             this.repositorioFornecedor = repositorioFornecedor;
+            repositorioBase = repositorioFornecedor;
             this.validador = validador;
         }
         
@@ -56,12 +57,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
         private void Cadastrar()
         {
             Imput(out InformacoesPessoais informacoesPessoais, out string cnpj);
+            
+            Fornecedor toAdd = new Fornecedor(informacoesPessoais,cnpj);
 
-            string valido = validador.ValidarFornecedor(informacoesPessoais, cnpj);
+            string valido = validador.ValidarFornecedor(toAdd);
 
             if (valido == "REGISTRO_REALIZADO")
             {
-                Fornecedor toAdd = new Fornecedor(informacoesPessoais,cnpj);
                 repositorioFornecedor.Insert(toAdd);
                 ExibirMensagem("\n   Fornecedor cadastrado com sucesso! ", ConsoleColor.DarkGreen);
             }
@@ -102,11 +104,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
             {
                 Imput(out InformacoesPessoais informacoesPessoais, out string cnpj);
 
-                string valido = validador.ValidarFornecedor(informacoesPessoais, cnpj);
+                Fornecedor imput = new(informacoesPessoais, cnpj);
+
+                string valido = validador.ValidarFornecedor(imput);
 
                 if (valido == "REGISTRO_REALIZADO")
                 {
-                    repositorioFornecedor.Update(toEdit, informacoesPessoais, cnpj);
+                    repositorioFornecedor.Update(toEdit, imput);
                     ExibirMensagem("\n   Fornecedor editado com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
@@ -166,7 +170,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFornecedor
             while (!int.TryParse(Console.ReadLine(), out id))
             {
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
-                Console.Write("\n   Digite o id do paciente: ");
+                Console.Write("\n   Digite o id do fornecedor: ");
             }
             return id;
         }

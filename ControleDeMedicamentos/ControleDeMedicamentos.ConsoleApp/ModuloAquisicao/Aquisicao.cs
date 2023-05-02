@@ -31,13 +31,14 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloAquisicao
         {
             Aquisicao toEdit = (Aquisicao)updated;
 
-            this.informacoesReposicao = toEdit.informacoesReposicao;
-            this.quantidadeAdquirida = toEdit.quantidadeAdquirida;
+            informacoesReposicao = toEdit.informacoesReposicao;
+            quantidadeAdquirida = toEdit.quantidadeAdquirida;
+            Estornar(toEdit);
         }
 
-        public void Estornar()
+        public void Estornar(Aquisicao toEdit)
         {
-            this.informacoesReposicao.remedio.quantidadeDisponivel = (this.informacoesReposicao.remedio.quantidadeDisponivel - this.quantidadeAdquirida);
+            informacoesReposicao.remedio.quantidadeDisponivel = (toEdit.informacoesReposicao.remedio.quantidadeDisponivel - toEdit.quantidadeAdquirida);
         }
     }
 }

@@ -17,10 +17,10 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
 
         public TelaFuncionario(RepositorioFuncionario repositorioFuncionario, Validador validador)
         {
-            nomeEntidade = "Funcionário";
+            nomeEntidade = "funcionário";
             sufixo = "s";
             this.repositorioFuncionario = repositorioFuncionario;
-            repositorioBase = repositorioFuncionario;
+        repositorioBase = repositorioFuncionario;
             this.validador = validador;
         }
 
@@ -131,16 +131,16 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloFuncionario
 
             Funcionario toDelete = (Funcionario)repositorioBase.GetById(ObterId(repositorioFuncionario));
 
-            string validacaoExclusao = validador.PermitirExclusaoDoFuncionario(toDelete);
+            string valido = validador.PermitirExclusaoDoFuncionario(toDelete);
 
-            if (toDelete != null && validacaoExclusao == "SUCESSO!")
+            if (toDelete != null && valido == "SUCESSO!")
             {
                 repositorioFuncionario.Delete(toDelete);
                 ExibirMensagem("\n   Funcionário excluido com sucesso! ", ConsoleColor.DarkGreen);
             }
             else
             {
-                ExibirMensagem("\n   Funcionario não excluido:" + validacaoExclusao, ConsoleColor.DarkRed);
+                ExibirMensagem("\n   Funcionario não excluido:" + valido, ConsoleColor.DarkRed);
             }
         }
 

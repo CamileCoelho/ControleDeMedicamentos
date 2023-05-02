@@ -2,6 +2,7 @@
 using ControleDeMedicamentos.ConsoleApp.Compartilhado;
 using ControleDeMedicamentos.ConsoleApp.ModuloAquisicao;
 using ControleDeMedicamentos.ConsoleApp.ModuloFornecedor;
+using ControleDeMedicamentos.ConsoleApp.ModuloFuncionario;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,15 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
 {
     public class TelaPaciente : TelaBase<Paciente>
     {
+        RepositorioBase<Paciente> repositorioBase;
         RepositorioPaciente repositorioPaciente;
 
         public TelaPaciente(RepositorioPaciente repositorioPaciente, Validador validador)
         {
-            nomeEntidade = "Paciente";
+            nomeEntidade = "paciente";
             sufixo = "s";
             this.repositorioPaciente = repositorioPaciente;
+            repositorioBase = repositorioPaciente;
             this.validador = validador;
         }
 
@@ -55,12 +58,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
         private void Cadastrar()
         {
             Imput(out InformacoesPessoais informacoesPessoais, out string cpf);
+          
+            Paciente toAdd = new Paciente(informacoesPessoais, cpf);
 
-            string valido = validador.ValidarPaciente(informacoesPessoais, cpf);
+            string valido = validador.ValidarPaciente(toAdd);
 
             if (valido == "REGISTRO_REALIZADO")
             {
-                Paciente toAdd = new Paciente(informacoesPessoais, cpf);
                 repositorioPaciente.Insert(toAdd); 
                 ExibirMensagem("\n   Paciente cadastrado com sucesso!", ConsoleColor.DarkGreen);
             }
@@ -91,7 +95,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
                 return;
             }
 
-            Paciente toEdit = repositorioPaciente.GetById(ObterId(repositorioPaciente));
+            Paciente toEdit = (Paciente)repositorioBase.GetById(ObterId(repositorioPaciente));
 
             if (toEdit == null)
             {
@@ -101,11 +105,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
             {
                 Imput(out InformacoesPessoais informacoesPessoais, out string cpf);
 
-                string valido = validador.ValidarPaciente(informacoesPessoais, cpf);
+                Paciente imput = new(informacoesPessoais, cpf);
+
+                string valido = validador.ValidarPaciente(imput);
 
                 if (valido == "REGISTRO_REALIZADO")
                 {
-                    repositorioPaciente.Update(toEdit, informacoesPessoais, cpf);
+                    repositorioPaciente.Update(toEdit, imput);
                     ExibirMensagem("\n   Paciente editado com sucesso!", ConsoleColor.DarkGreen);
                 }
                 else
@@ -124,7 +130,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloPaciente
                 return;
             }
 
-            Paciente toDelete = repositorioPaciente.GetById(ObterId(repositorioPaciente));
+            Paciente toDelete = (Paciente)repositorioBase.GetById(ObterId(repositorioPaciente));
 
             string valido = validador.PermitirExclusaoDoPaciente(toDelete);
 

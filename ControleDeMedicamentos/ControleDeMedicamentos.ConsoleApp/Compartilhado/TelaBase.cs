@@ -64,7 +64,7 @@ namespace ControleDeMedicamentos.ConsoleApp.Compartilhado
             Console.Clear();
             Console.WriteLine("____________________________________________________________________________________________________");
             Console.WriteLine();
-            Console.WriteLine($"                                     Gestão de {nomeEntidade}{sufixo})!                                    ");
+            Console.WriteLine($"                                     Gestão de {nomeEntidade}{sufixo}!                                    ");
             Console.WriteLine("____________________________________________________________________________________________________");
             Console.WriteLine();
             Console.WriteLine("   Digite:                                                                                          ");

@@ -9,10 +9,11 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
 {
     public class TelaRequisicao : TelaBase<Requisicao>
     {
+        RepositorioBase<Requisicao> repositorioBase;
         RepositorioRequisicao repositorioRequisicao;
-        RepositorioPaciente repositorioPaciente;
-        RepositorioRemedio repositorioRemedio;
-        RepositorioFuncionario repositorioFuncionario;
+        RepositorioBase<Paciente> repositorioPaciente;
+        RepositorioBase<Remedio> repositorioRemedio;
+        RepositorioBase<Funcionario> repositorioFuncionario;
         TelaPaciente telaPaciente;
         TelaRemedio telaRemedio;
         TelaFuncionario telaFuncionario;
@@ -21,6 +22,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
         public TelaRequisicao(RepositorioRequisicao repositorioRequisicao, RepositorioPaciente repositorioPaciente, RepositorioRemedio repositorioRemedio, RepositorioFuncionario repositorioFuncionario, TelaPaciente telaPaciente, TelaRemedio telaRemedio, TelaFuncionario telaFuncionario, Validador validador) 
         {
             this.repositorioRequisicao =  repositorioRequisicao;
+            repositorioBase = repositorioRequisicao;
             this.repositorioPaciente = repositorioPaciente;
             this.repositorioRemedio = repositorioRemedio;
             this.repositorioFuncionario = repositorioFuncionario;
@@ -60,22 +62,22 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Clear();
-                Console.WriteLine("__________________________________________________________________________________");
+                Console.WriteLine("______________________________________________________________________________________________");
                 Console.WriteLine();
-                Console.WriteLine("                             Gestão de Requisições!                               ");
-                Console.WriteLine("__________________________________________________________________________________");
+                Console.WriteLine("                                   Gestão de Requisições!                                     ");
+                Console.WriteLine("______________________________________________________________________________________________");
                 Console.WriteLine();
-                Console.WriteLine("   Digite:                                                                        ");
+                Console.WriteLine("   Digite:                                                                                    ");
+                Console.WriteLine();  
+                Console.WriteLine("   1  - Para realizar uma requisição.                                                         ");
                 Console.WriteLine();
-                Console.WriteLine("   1  - Para realizar uma requisição.                                             ");
+                Console.WriteLine("   2  - Para visualizar suas requisições.                                                     ");
                 Console.WriteLine();
-                Console.WriteLine("   2  - Para visualizar suas requisições.                                         ");
-                Console.WriteLine();
-                Console.WriteLine("   3  - Para editar a quantidade de remédios de uma requisição.                   ");
+                Console.WriteLine("   3  - Para editar a quantidade de remédios de uma requisição.                               ");
                 Console.WriteLine();
                 Console.WriteLine(); // não pode devolver o remedio, logo não pode excluir uma requisicao!
-                Console.WriteLine("   4  - Para voltar ao menu principal.                                            ");
-                Console.WriteLine("__________________________________________________________________________________");
+                Console.WriteLine("   4  - Para voltar ao menu principal.                                                        ");
+                Console.WriteLine("______________________________________________________________________________________________");
                 Console.WriteLine();
                 Console.Write("   Opção escolhida: ");
                 string opcao = Console.ReadLine().ToUpper();
@@ -115,11 +117,12 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
 
             Imput(out Paciente paciente, out InformacoesReposicao informacoesReposicao, out int quantidadeRequisitada, out string senhaImputada);
 
-            string valido = validador.ValidarRequisicao(informacoesReposicao, quantidadeRequisitada, senhaImputada);
+            Requisicao toAdd = new(paciente, informacoesReposicao, quantidadeRequisitada);
+
+            string valido = validador.ValidarRequisicao(toAdd, senhaImputada);
 
             if (valido == "REGISTRO_REALIZADO")
             {
-                Requisicao toAdd = new Requisicao(paciente, informacoesReposicao, quantidadeRequisitada);
                 repositorioRequisicao.Insert(toAdd);
                 ExibirMensagem("\n   Requisição realizada com sucesso!", ConsoleColor.DarkGreen);
             }
@@ -150,7 +153,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 return;
             }
 
-            Requisicao toEdit = repositorioRequisicao.GetById(ObterId(repositorioRequisicao));
+            Requisicao toEdit = (Requisicao)repositorioBase.GetById(ObterId(repositorioRequisicao));
 
             if (toEdit == null)
             {
@@ -163,11 +166,13 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 
                 ImputEdit(toEdit, out int quantidadeRequisitada, out string senhaImputada);
 
-                string valido = validador.ValidarRequisicao(toEdit.informacoesReposicao, quantidadeRequisitada, senhaImputada);
+                Requisicao imput = new(toEdit.paciente, toEdit.informacoesReposicao, toEdit.quantidadeRequisitada);
+
+                string valido = validador.ValidarRequisicao(imput, senhaImputada);
 
                 if (valido == "REGISTRO_REALIZADO")
                 {
-                    repositorioRequisicao.Update(toEdit, quantidadeRequisitada);
+                    repositorioRequisicao.Update(toEdit, imput);
                     toEdit.informacoesReposicao.remedio.quantidadeDisponivel = toEdit.informacoesReposicao.remedio.quantidadeDisponivel - quantidadeRequisitada;
                     ExibirMensagem("\n   Requisição editada com sucesso!", ConsoleColor.DarkGreen);
                 }
@@ -183,10 +188,10 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             informacoesReposicao = new InformacoesReposicao();
             Console.Clear();
 
-            paciente = repositorioPaciente.GetById(telaPaciente.ObterId(repositorioPaciente));
+            paciente = (Paciente)repositorioPaciente.GetById(telaPaciente.ObterId(repositorioPaciente));
 
-            informacoesReposicao.remedio = repositorioRemedio.GetById(telaRemedio.ObterId(repositorioRemedio));
-            informacoesReposicao.data = DateTime.Now;
+            informacoesReposicao.remedio = (Remedio)repositorioRemedio.GetById(telaRemedio.ObterId(repositorioRemedio));
+            informacoesReposicao.data = DateTime.Now.Date;
 
             Console.Write("\n   Digite a quatidade de unidades que o paciente deseja desse remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeRequisitada))
@@ -194,7 +199,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a quatidade de unidades que o paciente deseja desse remédio: ");
             }
-            informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            informacoesReposicao.funcionario = (Funcionario)repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
         }
@@ -202,14 +207,14 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
         private void ImputEdit(Requisicao toEdit, out int quantidadeRequisitada, out string senhaImputada)
         {
             Console.Clear();
-            toEdit.informacoesReposicao.data = DateTime.Now;
+            toEdit.informacoesReposicao.data = DateTime.Now.Date;
             Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja de remédio: ");
             while (!int.TryParse(Console.ReadLine(), out quantidadeRequisitada))
             {
                 ExibirMensagem("\n   Entrada inválida! Digite um número inteiro. ", ConsoleColor.DarkRed);
                 Console.Write("\n   Digite a nova quatidade de unidades que o paciente deseja de remédio: ");
             }
-            toEdit.informacoesReposicao.funcionario = (Funcionario)repositorioBase.GetById(telaFuncionario.ObterId(repositorioFuncionario));
+            toEdit.informacoesReposicao.funcionario = (Funcionario)repositorioFuncionario.GetById(telaFuncionario.ObterId(repositorioFuncionario));
             Console.Write("\n   Digite a senha: ");
             senhaImputada = Console.ReadLine();
         }
@@ -245,7 +250,7 @@ namespace ControleDeMedicamentos.ConsoleApp.ModuloRequisicao
             {
                 if (print != null)
                 {
-                    Console.WriteLine("{0,-5}|{1,-20}|{2,-20}|{3,-20}|{4,-20}|{5,-20}|{6,-20}", print.id, print.paciente.informacoesPessoais.nome, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.quantidadeRequisitada, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.informacoesReposicao.data);
+                    Console.WriteLine("{0,-5}|{1,-20}|{2,-20}|{3,-20}|{4,-20}|{5,-20}|{6,-20}", print.id, print.paciente.informacoesPessoais.nome, print.informacoesReposicao.funcionario.informacoesPessoais.nome, print.informacoesReposicao.remedio.nome, print.quantidadeRequisitada, print.informacoesReposicao.remedio.fornecedor.informacoesPessoais.nome, print.informacoesReposicao.data.ToString("dd/MM/yyyy"));
                 }
             }
         }
